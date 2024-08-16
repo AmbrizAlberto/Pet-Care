@@ -22,11 +22,12 @@ elimination of services, clients and pets.
 - User Roles: Differentiation of access and functionalities according to the user's role: user (administrator, veterinarian, support staff, client).
 - Report Generation: Creation of detailed reports on the use of the services, pet health, and internal management of staff and clients.
 
+## Impact
 The development of this application will have a positive impact by facilitating communication.
 between veterinarians and pet owners, as well as by improving internal management of
 veterinary clinics, contributing to better animal care and well-being.
 
-Members:
+## Members:
 1. Aguilar Ávalos José David
 2. Ambriz Chávez José Alberto
 3. Rodríguez Ruiz Francisco
