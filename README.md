@@ -2,7 +2,7 @@
 Spike: Veterinary Services and Pet Care
 
 ## Objectives and/or SDG Topics Addressed: 
-The &quot;Pet ​​Care&quot; is aligned with the
+The &quot;Spike&quot; is aligned with the
 Sustainable Development Goal (SDG) number 3: &quot;Health and Wellbeing&quot;. It has like
 main objective to improve the quality of life of pets and facilitate access to
 quality veterinary services through a platform that centralizes the management and
