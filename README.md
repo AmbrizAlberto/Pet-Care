@@ -1,12 +1,15 @@
-# Pet-Care
-Pet Care: Servicios de Veterinarios y Cuidado de Mascotas
+# Spike
+Spike: Veterinary Services and Pet Care
 
-Objectives and/or SDG Topics Addressed: The &quot;Pet ​​Care&quot; is aligned with the
+## Objectives and/or SDG Topics Addressed: 
+The &quot;Pet ​​Care&quot; is aligned with the
 Sustainable Development Goal (SDG) number 3: &quot;Health and Wellbeing&quot;. It has like
 main objective to improve the quality of life of pets and facilitate access to
 quality veterinary services through a platform that centralizes the management and
 pet care.
-Detailed Description of the PI: The &quot;Pet ​​Care&quot; looking to develop an application
+
+## Detailed Description of the Project:
+The &quot;Spike&quot; looking to develop an application
 mobile that acts as a comprehensive manager for veterinary clinics and care services
 of pets. The problem it solves is the lack of a centralized system and
 accessible for pet owners to manage appointments, maintain a history
@@ -22,7 +25,7 @@ elimination of services, clients and pets.
 - User Roles: Differentiation of access and functionalities according to the user's role: user (administrator, veterinarian, support staff, client).
 - Report Generation: Creation of detailed reports on the use of the services, pet health, and internal management of staff and clients.
 
-## Impact
+## Impact:
 The development of this application will have a positive impact by facilitating communication.
 between veterinarians and pet owners, as well as by improving internal management of
 veterinary clinics, contributing to better animal care and well-being.
