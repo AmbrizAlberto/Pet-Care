@@ -1,0 +1,69 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+**/build/
+**/local.properties
+.gradle/
+gradle-app.setting
+
+# IntelliJ IDEA / Android Studio
+.idea/
+*.iml
+.idea/modules.xml
+.idea/.name
+.idea/workspace.xml
+.idea/libraries
+.idea/shelf
+.idea/codeStyles
+.idea/caches
+.idea/modules
+.idea/.idea
+.idea/assetWizardSettings.xml
+.idea/compiler.xml
+.idea/copyright/profiles_settings.xml
+.idea/copyright
+.idea/dictionaries
+.idea/vcs.xml
+.idea/codeStyles/Project.xml
+.idea/dataSources.xml
+.idea/dataSources
+.idea/dataSources.local.xml
+.idea/sqlDataSources.xml
+.idea/sqlDataSources
+.idea/dynamic.xml
+.idea/uiDesigner.xml
+.idea/tasks.xml
+.idea/workspace.xml
+.idea/gradle.xml
+.idea/libraries/
+.idea/androidStudioFirstRun.xml
+.idea/codestyles
+.idea/codeStyles/
+.idea/copyright/
+.idea/inspectionProfiles
+.idea/scopes
+
+# Android Studio files
+android/.gradle/
+android/build/
+android/app/build/
+.android/
+*.iml
+
+# Miscellaneous
+.DS_Store
+*.log
+.idea/
+captures/
+.externalNativeBuild/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Keystore files
+*.jks
+*.keystore
+
+# Google Services (Firebase, Analytics)
+google-services.json
