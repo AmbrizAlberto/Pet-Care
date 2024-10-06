@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
@@ -27,6 +28,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -103,6 +106,10 @@ fun AddUserScreen(navController: NavHostController) {
     var phone by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var role by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    val context = LocalContext.current as ComponentActivity
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -160,12 +167,22 @@ fun AddUserScreen(navController: NavHostController) {
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = {
-                    createUser(firstName, lastName, email, phone, password, role) {
-                        navController.popBackStack()
+                if (isLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    Button(onClick = {
+                        isLoading = true
+                        errorMessage = null
+                        createUser(context, firstName, lastName, email, phone, password, role) {
+                            isLoading = false
+                            navController.popBackStack()
+                        }
+                    }) {
+                        Text("Submit")
                     }
-                }) {
-                    Text("Submit")
+                }
+                errorMessage?.let {
+                    Text(text = it, color = Color.Red)
                 }
             }
         }
@@ -176,7 +193,7 @@ fun fetchUsers(onResult: (List<Pair<String, String>>) -> Unit) {
     val client = OkHttpClient()
 
     val request = Request.Builder()
-        .url("http://localhost:3000/getUsers")
+        .url("http://10.0.2.2:3000/getUsers")
         .get()
         .build()
 
@@ -214,6 +231,7 @@ fun fetchUsers(onResult: (List<Pair<String, String>>) -> Unit) {
 }
 
 fun createUser(
+    context: ComponentActivity,
     firstName: String,
     lastName: String,
     email: String,
@@ -238,7 +256,7 @@ fun createUser(
     val body = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
     val request = Request.Builder()
-        .url("http://localhost:3000/createUser")
+        .url("http://10.0.2.2:3000/createUser")
         .post(body)
         .build()
 
@@ -251,10 +269,14 @@ fun createUser(
         override fun onResponse(call: Call, response: Response) {
             if (response.isSuccessful) {
                 println("Usuario creado exitosamente")
-                onResult()
+                // Ejecutar en el hilo principal
+                context.runOnUiThread {
+                    onResult()
+                }
             } else {
                 val errorCode = response.code
-                println("Error: Código de respuesta HTTP $errorCode")
+                val errorBody = response.body?.string()
+                println("Error: Código de respuesta HTTP $errorCode, Cuerpo del error: $errorBody")
             }
         }
     })
