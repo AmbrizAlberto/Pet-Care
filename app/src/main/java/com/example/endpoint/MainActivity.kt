@@ -57,6 +57,7 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController, startDestination = "home") {
                     composable("home") { HomeScreen(navController) }
                     composable("addUser") { AddUserScreen(navController) }
+                    composable("deleteUser") { DeleteUserScreen(navController) }
                 }
             }
         }
@@ -86,6 +87,12 @@ fun HomeScreen(navController: NavHostController) {
                     navController.navigate("addUser")
                 }) {
                     Text("Add User")
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = {
+                    navController.navigate("deleteUser")
+                }) {
+                    Text("Delete User")
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -189,6 +196,57 @@ fun AddUserScreen(navController: NavHostController) {
     )
 }
 
+@Composable
+fun DeleteUserScreen(navController: NavHostController) {
+    var userId by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    val context = LocalContext.current as ComponentActivity
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text("Delete User") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        content = { innerPadding ->
+            Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
+                OutlinedTextField(
+                    value = userId,
+                    onValueChange = { userId = it },
+                    label = { Text("User ID") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                if (isLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    Button(onClick = {
+                        isLoading = true
+                        errorMessage = null
+                        deleteUser(context, userId) {
+                            isLoading = false
+                            navController.popBackStack()
+                        }
+                    }) {
+                        Text("Delete")
+                    }
+                }
+                errorMessage?.let {
+                    Text(text = it, color = Color.Red)
+                }
+            }
+        }
+    )
+}
+
 fun fetchUsers(onResult: (List<Pair<String, String>>) -> Unit) {
     val client = OkHttpClient()
 
@@ -282,6 +340,40 @@ fun createUser(
     })
 }
 
+fun deleteUser(
+    context: ComponentActivity,
+    userId: String,
+    onResult: () -> Unit
+) {
+    val client = OkHttpClient()
+
+    val request = Request.Builder()
+        .url("http://10.0.2.2:3000/deleteUser/$userId")
+        .delete()
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            e.printStackTrace()
+            println("Error en la solicitud: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            if (response.isSuccessful) {
+                println("Usuario borrado exitosamente")
+                // Ejecutar en el hilo principal
+                context.runOnUiThread {
+                    onResult()
+                }
+            } else {
+                val errorCode = response.code
+                val errorBody = response.body?.string()
+                println("Error: Código de respuesta HTTP $errorCode, Cuerpo del error: $errorBody")
+            }
+        }
+    })
+}
+
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
@@ -295,5 +387,13 @@ fun HomeScreenPreview() {
 fun AddUserScreenPreview() {
     EndpointTheme {
         AddUserScreen(rememberNavController())
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DeleteUserScreenPreview() {
+    EndpointTheme {
+        DeleteUserScreen(rememberNavController())
     }
 }
