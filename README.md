@@ -41,9 +41,9 @@ between veterinarians and pet owners, as well as by improving internal managemen
 veterinary clinics, contributing to better animal care and well-being.
 
 ## Members:
-- [@octokatherine](https://www.github.com/JDAA4)
-- [@octokatherine](https://www.github.com/AmbrizAlberto)
-- [@octokatherine](https://www.github.com/Paco-Taco)
-- [@octokatherine](https://www.github.com/arielrosasc)
-- [@octokatherine](https://www.github.com/CitlalyEstefania)
-- [@octokatherine](https://www.github.com/MartinFitS)
+- [@JDAA4](https://www.github.com/JDAA4)
+- [@AmbrizAlberto](https://www.github.com/AmbrizAlberto)
+- [@Paco-Taco](https://www.github.com/Paco-Taco)
+- [@arielrosasc](https://www.github.com/arielrosasc)
+- [@CitlalyEstefania](https://www.github.com/CitlalyEstefania)
+- [@MartinFitS](https://www.github.com/MartinFitS)
