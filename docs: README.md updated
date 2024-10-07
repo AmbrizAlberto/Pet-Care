@@ -25,15 +25,25 @@ elimination of services, clients and pets.
 - User Roles: Differentiation of access and functionalities according to the user's role: user (administrator, veterinarian, support staff, client).
 - Report Generation: Creation of detailed reports on the use of the services, pet health, and internal management of staff and clients.
 
+## Technology Stack:
+- **Front-end:**  
+  Mobile development using **Kotlin Native**, ensuring compatibility with Android devices for user experiences.
+- **Back-end:**  
+  Developed using **Node.js** with **Prisma** and **Express** for scalable server-side functionality.
+- **Database:**
+  **PostgreSQL** with **Supabase** hosting for flexible and efficient storage of client, pet and clinic data.
+- **Cloud Services:**  
+  Hosting on **AWS** to ensure high availability and secure data management.
+
 ## Impact:
 The development of this application will have a positive impact by facilitating communication.
 between veterinarians and pet owners, as well as by improving internal management of
 veterinary clinics, contributing to better animal care and well-being.
 
 ## Members:
-1. Aguilar Ávalos José David
-2. Ambriz Chávez José Alberto
-3. Rodríguez Ruiz Francisco
-4. Rosas Chávez Ariel Nathalie
-5. Sámano López Citlaly Estefanía
-6. Serna Díaz Martín
+- [@octokatherine](https://www.github.com/JDAA4)
+- [@octokatherine](https://www.github.com/AmbrizAlberto)
+- [@octokatherine](https://www.github.com/Paco-Taco)
+- [@octokatherine](https://www.github.com/arielrosasc)
+- [@octokatherine](https://www.github.com/CitlalyEstefania)
+- [@octokatherine](https://www.github.com/MartinFitS)
