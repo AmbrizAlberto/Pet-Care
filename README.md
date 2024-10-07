@@ -9,18 +9,19 @@ This project is a user management application that interacts with a backend thro
 ## Endpoints
 
 ### **1. Create User**
-
-#### **Description:**
+#### *Description:*
 This endpoint allows the creation of a new user in the system.
 
-#### **URL:**
-POST /createUser
+#### *URL:*
+``` 
+https://api-spike-indol.vercel.app/createUser
+```
 
 
-#### **HTTP Method:**
-`POST`
+#### *HTTP Method:*
+`POST`  /createUser
 
-#### **Body:**
+#### *Body:*
 The following fields must be sent in JSON format in the request body:
 
 | Parameter  | Type   | Required | Description                      |
@@ -32,7 +33,7 @@ The following fields must be sent in JSON format in the request body:
 | password   | String | Yes      | The user's password              |
 | role       | String | Yes      | The role assigned to the user (e.g., `ADMIN`,`VETERINARY_OWNER`,`PET_OWNER`) |
 
-#### **Example Body (JSON):**
+#### *Example Body (JSON):*
 ```json
 {
   "firstName": "John",
@@ -42,3 +43,67 @@ The following fields must be sent in JSON format in the request body:
   "password": "password123",
   "role": "ADMIN"
 }
+```
+#### *Successful Response:*
+
+- HTTP Code: 201 Created
+- Description: User created successfully
+```json
+{
+  "message": "User created successfully",
+}
+```
+### **2. Delete User**
+#### *Description:*
+This endpoint allows the deletion of a user by their userId.
+#### *HTTP Method:*
+`DELETE`   /deleteUser/{userId}
+#### *Path Parameters:*
+| Parameter  | Type   | Required | Description                      |
+|------------|--------|----------|----------------------------------|
+| userId  | String | Yes      | The unique identifier of the user to be deleted           |
+
+#### *URL:*
+```
+ https://api-spike-indol.vercel.app/deleteUser/:{userId}
+
+```
+#### *Successful Response:*
+- HTTP Code: 200 OK
+- **Description:** User deleted successfully.
+#### *Example Response (JSON)::*
+```json
+{
+  "message": "User deleted successfully",
+}
+```
+### **3. List Users**
+#### *Description:*
+This endpoint returns a list of all users registered in the system.
+#### *HTTPMethod:*
+`GET` /getUsers
+#### *URL:*
+```
+ https://api-spike-indol.vercel.app/getUsers
+
+```
+####  *Successful Response:*
+- HTTP Code: 200 OK
+- Description: List of users retrieved successfully.
+```json
+[
+  {
+    "id": "abc123",
+    "firstName": "John",
+    "lastName": "Doe"
+  },
+  {
+    "id": "xyz456",
+    "firstName": "Jane",
+    "lastName": "Smith"
+  }
+]
+```
+## Authors
+
+- [@JDAA4](https://github.com/JDAA4)
