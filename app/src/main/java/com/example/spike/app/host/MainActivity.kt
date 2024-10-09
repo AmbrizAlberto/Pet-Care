@@ -9,39 +9,49 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.spike.presentation.navigation.Destination
 import com.example.spike.presentation.theme.SpikeTheme
+import com.example.spike.presentation.ui.mainScreen.PetCareCatalogueScreen
+import com.example.spike.presentation.ui.profileScreen.ProfileScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+//        enableEdgeToEdge()
         setContent {
             SpikeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                val navController = rememberNavController()
+                val selectedItemIndexMenu = remember { mutableIntStateOf(0) }
+                NavHost(
+                    navController = navController,
+                    startDestination = Destination.VetList.route
+                ) {
+                    composable(
+                        route = Destination.VetList.route
+                    ) {
+                        PetCareCatalogueScreen(
+                            selectedItemIndexMenu = selectedItemIndexMenu,
+                            navController = navController
+                        )
+                    }
+                    composable(
+                        route = Destination.Profile.route
+                    ) {
+                        ProfileScreen(
+                            navController,
+                            selectedItemIndexMenu
+                        )
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SpikeTheme {
-        Greeting("Android")
     }
 }

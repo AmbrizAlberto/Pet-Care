@@ -1,4 +1,4 @@
-package com.example.spike.presentation.ui.mainScreen.theme
+package com.example.spike.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
@@ -6,7 +6,7 @@ val colorBlack = Color(0xFF201F20)
 val colorBlack600 = Color(0x99201F20)
 
 
-val grayBackground = Color(0x39434F)
+val grayBackground = Color(0xFF39434F)
 
 val colorLight = Color(0xFFF6F7FC)
 val colorYellow = Color(0xFFCEAD2F)

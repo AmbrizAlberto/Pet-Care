@@ -1,17 +1,22 @@
 package com.example.spike.presentation.ui.mainScreen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +26,7 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,13 +39,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spike.R
+import com.example.spike.presentation.ui.categories
 import com.example.spike.presentation.ui.mainScreen.components.BaseLayoutScreen
-import com.example.spike.presentation.ui.mainScreen.theme.colorBlack
-import com.example.spike.presentation.ui.mainScreen.theme.white700
+import com.example.spike.presentation.ui.theme.colorBlack
+import com.example.spike.presentation.ui.theme.grayBackground
+import com.example.spike.presentation.ui.theme.white700
 
 @Composable
 fun PetCareCatalogueScreen(
-    onItemClick: (String) -> Unit,
+//    onItemClick: (String) -> Unit,
     selectedItemIndexMenu: MutableState<Int>,
     navController: NavHostController,
 ) {
@@ -56,7 +64,10 @@ fun PetCareCatalogueScreen(
                     end = 15.dp
                 )
         ) {
-
+            TopBarSection()
+            SearchSection()
+            Spacer(height = 20)
+            SectionCategoryListHorizontal()
         }
     }
 }
@@ -78,11 +89,6 @@ fun TopBarSection() {
             modifier = Modifier
                 .width(48.dp)
                 .height(48.dp)
-                .border(
-                    width = 1.dp,
-                    color = Color(0x99FF594F),
-//                    shape = RoundedCornerShape(50.dp)
-                )
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_user),
@@ -111,7 +117,7 @@ fun SearchSection() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(15.dp)
-                .border(width = 0.dp, Color.White, shape = RoundedCornerShape(15.dp)),
+                .border(width = 2.dp, Color.Gray, shape = RoundedCornerShape(15.dp)),
             shape = RoundedCornerShape(15.dp),
             placeholder = {
                 Text(
@@ -130,10 +136,62 @@ fun SearchSection() {
     }
 }
 
+@Composable
+fun CategoryTitle(category: Any, isSelected: Boolean, modifier: Modifier) {
+    Box(
+        modifier = modifier
+    ) {
+        Text(
+            text = category.toString(),
+            style = if (isSelected) {
+                MaterialTheme.typography.titleMedium
+            } else {
+                MaterialTheme.typography.bodyLarge
+            },
+            color = white700
+        )
+    }
+
+}
+
+@Composable
+fun SectionCategoryListHorizontal() {
+    val selectedIndex = remember {
+        mutableIntStateOf(0)
+    }
+
+    LazyRow(
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        itemsIndexed(categories) { index, item ->
+            val isSelected = index == selectedIndex.value
+            CategoryTitle(
+                category = item,
+                isSelected = isSelected,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = isSelected,
+                        enabled = true,
+                        onClick = { selectedIndex.value = index }
+                    )
+            )
+        }
+    }
+}
+
+@Composable
+fun Spacer(height: Int) {
+    Spacer(modifier = Modifier.height(height.dp))
+}
+
+
 
 @Preview
 @Composable
-fun TopBarSectionPreview() {
+fun PetCareCataloguePreview() {
     val selectedItemIndexMenu: MutableState<Int> = remember { mutableStateOf(0) }
     val navController = rememberNavController()
 
@@ -152,6 +210,8 @@ fun TopBarSectionPreview() {
         ) {
             TopBarSection()
             SearchSection()
+            Spacer(height = 20)
+            SectionCategoryListHorizontal()
         }
     }
 }

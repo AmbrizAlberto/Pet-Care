@@ -15,17 +15,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.spike.presentation.ui.Menu
-import com.example.spike.presentation.ui.mainScreen.theme.colorBlack
-import com.example.spike.presentation.ui.mainScreen.theme.grayBackground
-import com.example.spike.presentation.ui.mainScreen.theme.white700
+import com.example.spike.presentation.ui.mainScreen.SearchSection
+import com.example.spike.presentation.ui.mainScreen.SectionCategoryListHorizontal
+import com.example.spike.presentation.ui.mainScreen.Spacer
+import com.example.spike.presentation.ui.mainScreen.TopBarSection
+import com.example.spike.presentation.ui.theme.colorBlack
+import com.example.spike.presentation.ui.theme.grayBackground
+import com.example.spike.presentation.ui.theme.white700
+import com.example.spike.presentation.ui.menuItems
 
 
 @Composable
@@ -40,21 +49,27 @@ fun BaseLayoutScreen(
             .background(grayBackground)
     ) {
         content()
+        SectionMenuBottom(
+            items = menuItems,
+            selectedItemIndexMenu = selectedItemIndexMenu,
+            navController = navController,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
 
 @Composable
 fun SectionMenuBottom(
+    modifier: Modifier = Modifier,
     items: List<Menu>,
     initialSelectedItemIndex: Int = 0,
     selectedItemIndexMenu: MutableState<Int>,
     navController: NavHostController,
-    modifier: Modifier = Modifier
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(15.dp)
             .clip(shape = RoundedCornerShape(20.dp))
@@ -84,7 +99,7 @@ fun SectionMenuBottom(
                 Text(
                     text = menu.title,
                     style = if (index == selectedItemIndexMenu.value) {
-                        MaterialTheme.typography.headlineMedium
+                        MaterialTheme.typography.titleMedium
                     } else {
                         MaterialTheme.typography.bodySmall
                     },
@@ -92,5 +107,19 @@ fun SectionMenuBottom(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun BaseLayoutScreenPreview() {
+    val selectedItemIndexMenu: MutableState<Int> = remember { mutableStateOf(0) }
+    val navController = rememberNavController()
+
+    BaseLayoutScreen(
+        navController = navController,
+        selectedItemIndexMenu = selectedItemIndexMenu
+    ) {
+//        Contenido
     }
 }
