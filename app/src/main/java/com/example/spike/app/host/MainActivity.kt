@@ -9,7 +9,6 @@ import androidx.compose.material3.Surface
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.spike.presentation.theme.SpikeTheme
 import androidx.compose.ui.Modifier
 
 //Pantallas
