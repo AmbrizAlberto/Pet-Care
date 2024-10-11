@@ -29,7 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.spike.presentation.ui.Menu
 import com.example.spike.presentation.ui.mainScreen.SearchSection
 import com.example.spike.presentation.ui.mainScreen.SectionCategoryListHorizontal
-import com.example.spike.presentation.ui.mainScreen.Spacer
+import com.example.spike.presentation.ui.mainScreen.VerticalSpacer
 import com.example.spike.presentation.ui.mainScreen.TopBarSection
 import com.example.spike.presentation.ui.theme.colorBlack
 import com.example.spike.presentation.ui.theme.grayBackground
