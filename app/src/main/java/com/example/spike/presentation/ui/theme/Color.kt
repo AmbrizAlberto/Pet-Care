@@ -6,7 +6,8 @@ val colorBlack = Color(0xFF201F20)
 val colorBlack600 = Color(0x99201F20)
 
 
-val grayBackground = Color(0xFF39434F)
+val grayBackground = Color(0xFF2B3240)
+val grayContent = Color(0xFF5A5A5A)
 
 val colorLight = Color(0xFFF6F7FC)
 val colorYellow = Color(0xFFCEAD2F)

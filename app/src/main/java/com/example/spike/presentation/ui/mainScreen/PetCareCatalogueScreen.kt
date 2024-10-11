@@ -1,5 +1,7 @@
 package com.example.spike.presentation.ui.mainScreen
 
+import android.graphics.Paint.Align
+import android.icu.text.ListFormatter.Width
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,12 +16,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
@@ -43,7 +48,15 @@ import com.example.spike.presentation.ui.categories
 import com.example.spike.presentation.ui.mainScreen.components.BaseLayoutScreen
 import com.example.spike.presentation.ui.theme.colorBlack
 import com.example.spike.presentation.ui.theme.grayBackground
+import com.example.spike.presentation.ui.theme.grayContent
 import com.example.spike.presentation.ui.theme.white700
+
+// Simulando listas de elementos para cada categoría
+val categoryItems = listOf(
+    listOf("Item A1", "Item A2", "Item A3"),
+    listOf("Item B1", "Item B2", "Item B3"),
+    listOf("Item C1", "Item C2", "Item C3"),
+)
 
 @Composable
 fun PetCareCatalogueScreen(
@@ -51,6 +64,11 @@ fun PetCareCatalogueScreen(
     selectedItemIndexMenu: MutableState<Int>,
     navController: NavHostController,
 ) {
+    val selectedIndex = remember {
+        mutableIntStateOf(0)
+    }
+
+
     BaseLayoutScreen(
         navController = navController,
         selectedItemIndexMenu = selectedItemIndexMenu
@@ -66,8 +84,10 @@ fun PetCareCatalogueScreen(
         ) {
             TopBarSection()
             SearchSection()
-            Spacer(height = 20)
-            SectionCategoryListHorizontal()
+            VerticalSpacer(height = 20)
+            SectionCategoryListHorizontal(selectedIndex = selectedIndex)
+            VerticalSpacer(height = 20)
+            CategoryItemList(items = categoryItems[selectedIndex.value])
         }
     }
 }
@@ -104,7 +124,7 @@ fun TopBarSection() {
 @Composable
 fun SearchSection() {
     Column(modifier = Modifier.padding(top = 20.dp)) {
-        TextField(
+        OutlinedTextField(
             value = "",
             onValueChange = {},
             leadingIcon = {
@@ -155,11 +175,7 @@ fun CategoryTitle(category: Any, isSelected: Boolean, modifier: Modifier) {
 }
 
 @Composable
-fun SectionCategoryListHorizontal() {
-    val selectedIndex = remember {
-        mutableIntStateOf(0)
-    }
-
+fun SectionCategoryListHorizontal(selectedIndex: MutableState<Int>) {
     LazyRow(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier
@@ -183,11 +199,48 @@ fun SectionCategoryListHorizontal() {
 }
 
 @Composable
-fun Spacer(height: Int) {
+fun CategoryItemList(items: List<String>) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        items(items) { item ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp) // Espaciado entre elementos
+                    .clip(RoundedCornerShape(15.dp))
+                    .background(grayContent)
+                    .padding(20.dp), //Espaciado interior
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "imagen")
+                    HorizontalSpacer(width = 10)
+                    Text(
+                        text = item,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = white700,
+                    )
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun VerticalSpacer(height: Int) {
     Spacer(modifier = Modifier.height(height.dp))
 }
 
-
+@Composable
+fun HorizontalSpacer(width: Int) {
+    Spacer(modifier = Modifier.width(width.dp))
+}
 
 @Preview
 @Composable
@@ -210,8 +263,10 @@ fun PetCareCataloguePreview() {
         ) {
             TopBarSection()
             SearchSection()
-            Spacer(height = 20)
-            SectionCategoryListHorizontal()
+            VerticalSpacer(height = 20)
+            SectionCategoryListHorizontal(selectedItemIndexMenu)
+            VerticalSpacer(height = 20)
+            CategoryItemList(items = categoryItems[selectedItemIndexMenu.value])
         }
     }
 }
