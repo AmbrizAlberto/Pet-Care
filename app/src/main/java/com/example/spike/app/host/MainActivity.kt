@@ -40,23 +40,23 @@ class MainActivity : ComponentActivity() {
                     val selectedItemIndexMenu = remember { mutableIntStateOf(0) }
 
                     // Configurar la NavHost
-                    NavHost(navController = navController, startDestination = "login") {
-                        composable("login") {
+                    NavHost(navController = navController, startDestination = Destination.Login.route) {
+                        composable(Destination.Login.route) {
                             LoginScreen(
                                 navController = navController,
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
-                        composable("register") {
+                        composable(Destination.Register.route) {
                             RegisterScreen(navController = navController)
                         }
-                        composable("user_register") {
+                        composable(Destination.UserRegister.route) {
                             RegisterScreenUser(navController = navController)
                         }
-                        composable("confirmation") {
+                        composable(Destination.Confirmation.route) {
                             ConfirmationScreen(navController = navController)
                         }
-                        composable("vet_register") {
+                        composable(Destination.VetRegister.route) {
                             RegisterScreenVet(navController = navController)
                         }
 
