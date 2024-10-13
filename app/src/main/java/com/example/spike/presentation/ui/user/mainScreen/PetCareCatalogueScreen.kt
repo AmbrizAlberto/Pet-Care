@@ -1,4 +1,4 @@
-package com.example.spike.presentation.ui.mainScreen
+package com.example.spike.presentation.ui.user.mainScreen
 
 import android.graphics.Paint.Align
 import android.icu.text.ListFormatter.Width
@@ -45,7 +45,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spike.R
 import com.example.spike.presentation.ui.categories
-import com.example.spike.presentation.ui.mainScreen.components.BaseLayoutScreen
+import com.example.spike.presentation.ui.user.mainScreen.components.BaseLayoutScreen
 import com.example.spike.presentation.ui.theme.colorBlack
 import com.example.spike.presentation.ui.theme.grayBackground
 import com.example.spike.presentation.ui.theme.grayContent

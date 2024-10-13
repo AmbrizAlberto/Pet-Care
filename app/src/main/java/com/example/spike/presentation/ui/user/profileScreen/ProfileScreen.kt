@@ -1,4 +1,4 @@
-package com.example.spike.presentation.ui.profileScreen
+package com.example.spike.presentation.ui.user.profileScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,8 +35,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spike.R
-import com.example.spike.presentation.ui.mainScreen.VerticalSpacer
-import com.example.spike.presentation.ui.mainScreen.components.BaseLayoutScreen
+import com.example.spike.presentation.ui.user.mainScreen.VerticalSpacer
+import com.example.spike.presentation.ui.user.mainScreen.components.BaseLayoutScreen
 import com.example.spike.presentation.ui.theme.colorLight
 import com.example.spike.presentation.ui.theme.darkCementPalette
 import com.example.spike.presentation.ui.theme.white700

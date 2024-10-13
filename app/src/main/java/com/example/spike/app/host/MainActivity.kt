@@ -12,74 +12,38 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.Modifier
 
 //Pantallas
-import com.example.spike.presentation.ui.screenLogin.LoginScreen
-import com.example.spike.presentation.ui.screenRegister.ConfirmationScreen
-import com.example.spike.presentation.ui.screenRegister.RegisterScreen
-import com.example.spike.presentation.ui.screenRegister.registerUser.RegisterScreenUser
-import com.example.spike.presentation.ui.screenRegister.registerVet.RegisterScreenVet
-
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.spike.presentation.navigation.Destination
+import com.example.spike.data.model.User
+import com.example.spike.presentation.ui.admin.navigation.AdminNavHost
+import com.example.spike.presentation.ui.shared.navigation.SharedNavHost
 import com.example.spike.presentation.ui.theme.SpikeTheme
-import com.example.spike.presentation.ui.mainScreen.PetCareCatalogueScreen
-import com.example.spike.presentation.ui.profileScreen.ProfileScreen
+import com.example.spike.presentation.ui.user.navigation.UserNavHost
+import com.example.spike.presentation.ui.vet.navigation.VetNavHost
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
         setContent {
             SpikeTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     // Configurar el NavController
                     val navController = rememberNavController()
-                    val selectedItemIndexMenu = remember { mutableIntStateOf(0) }
+                    val userRole = getUserRole()
 
-                    // Configurar la NavHost
-                    NavHost(navController = navController, startDestination = Destination.Login.route) {
-                        composable(Destination.Login.route) {
-                            LoginScreen(
-                                navController = navController,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                        composable(Destination.Register.route) {
-                            RegisterScreen(navController = navController)
-                        }
-                        composable(Destination.UserRegister.route) {
-                            RegisterScreenUser(navController = navController)
-                        }
-                        composable(Destination.Confirmation.route) {
-                            ConfirmationScreen(navController = navController)
-                        }
-                        composable(Destination.VetRegister.route) {
-                            RegisterScreenVet(navController = navController)
-                        }
-
-                        composable(
-                            route = Destination.VetList.route
-                        ) {
-                            PetCareCatalogueScreen(
-                                selectedItemIndexMenu = selectedItemIndexMenu,
-                                navController = navController
-                            )
-                        }
-                        composable(
-                            route = Destination.Profile.route
-                        ) {
-                            ProfileScreen(
-                                navController,
-                                selectedItemIndexMenu
-                            )
-                        }
+                    when (userRole) {
+                        "admin" -> AdminNavHost(navController)
+                        "user" -> UserNavHost(navController)
+                        "vet" -> VetNavHost(navController)
+                        else -> SharedNavHost(navController) // Si no está autenticado o no tiene un rol válido
                     }
                 }
             }
         }
+    }
+
+    private fun getUserRole(): String {
+        val exampleUser = User("Test", "user")
+
+        return exampleUser.role
     }
 }
 

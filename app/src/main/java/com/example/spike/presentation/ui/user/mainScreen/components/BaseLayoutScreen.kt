@@ -1,4 +1,4 @@
-package com.example.spike.presentation.ui.mainScreen.components
+package com.example.spike.presentation.ui.user.mainScreen.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,10 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spike.presentation.ui.Menu
-import com.example.spike.presentation.ui.mainScreen.SearchSection
-import com.example.spike.presentation.ui.mainScreen.SectionCategoryListHorizontal
-import com.example.spike.presentation.ui.mainScreen.VerticalSpacer
-import com.example.spike.presentation.ui.mainScreen.TopBarSection
+import com.example.spike.presentation.ui.user.mainScreen.SearchSection
+import com.example.spike.presentation.ui.user.mainScreen.SectionCategoryListHorizontal
+import com.example.spike.presentation.ui.user.mainScreen.VerticalSpacer
+import com.example.spike.presentation.ui.user.mainScreen.TopBarSection
 import com.example.spike.presentation.ui.theme.colorBlack
 import com.example.spike.presentation.ui.theme.grayBackground
 import com.example.spike.presentation.ui.theme.white700

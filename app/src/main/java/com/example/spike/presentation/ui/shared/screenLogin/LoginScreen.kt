@@ -1,4 +1,4 @@
-package com.example.spike.presentation.ui.screenLogin
+package com.example.spike.presentation.ui.shared.screenLogin
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
