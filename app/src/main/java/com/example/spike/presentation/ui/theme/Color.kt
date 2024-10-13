@@ -17,8 +17,14 @@ val heartColor = Color(0xFFFF7272)
 val white700 = Color(0xB3FFFFFF)
 val starYellow = Color(0xFFFF9A00)
 
+// Main color palette
+val bluePalette = Color(0xFF1368CC)
+val graphitePalette = Color(0xFF2B3240)
+val darkCementPalette = Color(0xFF39434F)
+val yellowPalette = Color(0xFFFFC542)
 
 
+// Stock
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
