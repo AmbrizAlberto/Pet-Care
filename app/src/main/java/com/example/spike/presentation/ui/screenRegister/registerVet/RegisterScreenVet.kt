@@ -1,4 +1,4 @@
-package com.example.spike.presentation.iu.screenRegister.registerVet
+package com.example.spike.presentation.ui.screenRegister.registerVet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

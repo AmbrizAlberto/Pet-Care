@@ -1,4 +1,4 @@
-package com.example.spike.presentation.iu.screenRegister
+package com.example.spike.presentation.ui.screenRegister
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.example.spike.R
 import androidx.compose.runtime.*
 import androidx.navigation.NavController

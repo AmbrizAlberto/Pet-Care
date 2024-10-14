@@ -10,6 +10,9 @@ activityCompose = "1.9.2"
 composeBom = "2024.04.01"
 navigationCompose = "2.8.2"
 navigationRuntimeKtx = "2.8.2"
+retrofit = "2.9.0"
+gson = "2.9.0"
+kotlinx-coroutines = "1.4.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -28,6 +31,9 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "gson" }
+coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

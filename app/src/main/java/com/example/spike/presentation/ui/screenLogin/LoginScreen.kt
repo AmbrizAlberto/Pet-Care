@@ -1,5 +1,6 @@
-package com.example.spike.presentation.iu.screenLogin
+package com.example.spike.presentation.ui.screenLogin
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +43,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spike.R
@@ -77,10 +80,16 @@ fun FiveSidedShape() {
 }
 
 @Composable
-fun LoginScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+fun LoginScreen(
+    navController: NavHostController,
+    loginViewModel: LoginViewModel = viewModel(),
+    modifier: Modifier = Modifier
+) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    val loginState = loginViewModel.loginState.value
+    val errorMessage = loginViewModel.errorMessage.value
 
     Box(
         modifier = modifier
@@ -88,7 +97,6 @@ fun LoginScreen(navController: NavHostController, modifier: Modifier = Modifier)
             .background(Color(0xFF3E4357))
     ) {
         FiveSidedShape()
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -108,7 +116,6 @@ fun LoginScreen(navController: NavHostController, modifier: Modifier = Modifier)
                         .padding(end = 8.dp),
                     contentScale = ContentScale.Crop
                 )
-
                 Text(
                     text = "Spike",
                     color = Color.White,
@@ -168,9 +175,9 @@ fun LoginScreen(navController: NavHostController, modifier: Modifier = Modifier)
                     checked = passwordVisible,
                     onCheckedChange = { passwordVisible = it },
                     colors = CheckboxDefaults.colors(
-                        checkedColor = Color(0xFF2274A5), // Color de la marca cuando está marcada
-                        uncheckedColor = Color.White, // Color del cuadro cuando está desmarcada
-                        checkmarkColor = Color.White // Color de la marca (check) en el cuadro
+                        checkedColor = Color(0xFF2274A5),
+                        uncheckedColor = Color.White,
+                        checkmarkColor = Color.White
                     )
                 )
                 Text(
@@ -179,7 +186,6 @@ fun LoginScreen(navController: NavHostController, modifier: Modifier = Modifier)
                     fontSize = 14.sp,
                     modifier = Modifier.padding(start = 8.dp)
                 )
-
                 Spacer(modifier = Modifier.weight(1f))
                 // Botón "Forgot password?"
                 Text(
@@ -193,10 +199,25 @@ fun LoginScreen(navController: NavHostController, modifier: Modifier = Modifier)
 
             Spacer(modifier = Modifier.height(44.dp))
 
+            // Mostrar mensaje de error si existe
+            errorMessage?.let {
+                Text(
+                    text = it,
+                    color = Color.Red,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+
             // Botón "Login"
             Button(
-                onClick = { /* lógica de inicio de sesión */ },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2274A5)), // Color de Login
+                onClick = {
+                    if (username.isNotEmpty() && password.isNotEmpty()) {
+                        loginViewModel.login(username, password)
+                    } else {
+                        loginViewModel.errorMessage.value = "Please fill in all fields."
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2274A5)),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 26.dp)
@@ -205,6 +226,34 @@ fun LoginScreen(navController: NavHostController, modifier: Modifier = Modifier)
             ) {
                 Text("Login", fontSize = 18.sp, color = Color.White)
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Navegación a pantalla principal
+            LaunchedEffect(loginState) {
+                if (loginState != null && loginState.token != null) {
+                    when (loginState.user.role) {
+                        "PET_OWNER" -> {
+                            navController.navigate("principalPetOwner") {
+                                popUpTo("login") { inclusive = true }
+                            }
+                        }
+                        "VETERINARY_OWNER" -> {
+                            navController.navigate("principalVet") {
+                                popUpTo("login") { inclusive = true }
+                            }
+                        }
+                        else -> {
+                            Log.d("LoginDebug", "Unrecognized role: ${loginState.user.role}")
+                            loginViewModel.errorMessage.value = "Login failed: Unrecognized user type."
+                        }
+                    }
+                } else if (loginState != null && loginState.token == null) {
+                    // Mensaje de error si no existe token
+                    loginViewModel.errorMessage.value = "Login failed: Invalid credentials."
+                }
+            }
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -226,7 +275,7 @@ fun LoginScreen(navController: NavHostController, modifier: Modifier = Modifier)
 
             // Botón "Register"
             Button(
-                onClick = { navController.navigate("register") }, // Navegar a la pantalla de registro
+                onClick = { navController.navigate("register") },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -246,6 +295,7 @@ fun LoginScreenPreview() {
     val navController = rememberNavController()
     LoginScreen(navController = navController)
 }
+
 
 
 

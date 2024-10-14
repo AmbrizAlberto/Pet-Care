@@ -13,11 +13,13 @@ import com.example.spike.presentation.theme.SpikeTheme
 import androidx.compose.ui.Modifier
 
 //Pantallas
-import com.example.spike.presentation.iu.screenLogin.LoginScreen
-import com.example.spike.presentation.iu.screenRegister.ConfirmationScreen
-import com.example.spike.presentation.iu.screenRegister.RegisterScreen
-import com.example.spike.presentation.iu.screenRegister.registerUser.RegisterScreenUser
-import com.example.spike.presentation.iu.screenRegister.registerVet.RegisterScreenVet
+import com.example.spike.presentation.ui.screenLogin.LoginScreen
+import com.example.spike.presentation.ui.screenPrincipal.PrincipalPetOwnerScreen
+import com.example.spike.presentation.ui.screenPrincipal.PrincipalVetScreen
+import com.example.spike.presentation.ui.screenRegister.ConfirmationScreen
+import com.example.spike.presentation.ui.screenRegister.RegisterScreen
+import com.example.spike.presentation.ui.screenRegister.registerUser.RegisterScreenUser
+import com.example.spike.presentation.ui.screenRegister.registerVet.RegisterScreenVet
 
 
 class MainActivity : ComponentActivity() {
@@ -46,7 +48,12 @@ class MainActivity : ComponentActivity() {
                         composable("vet_register") {
                             RegisterScreenVet(navController = navController)
                         }
-
+                        composable("principalPetOwner") {
+                            PrincipalPetOwnerScreen(navController = navController)
+                        }
+                        composable("principalVet") {
+                            PrincipalVetScreen(navController = navController)
+                        }
                     }
                 }
             }

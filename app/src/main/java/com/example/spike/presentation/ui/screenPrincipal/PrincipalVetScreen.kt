@@ -1,4 +1,4 @@
-package com.example.spike.presentation.iu.screenRegister.registerUser
+package com.example.spike.presentation.ui.screenPrincipal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,7 +15,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun RegisterScreenUser(navController: NavController) {
+fun PrincipalVetScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -23,7 +23,7 @@ fun RegisterScreenUser(navController: NavController) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Hola, usuario",
+            text = "Hola, veterinaria",
             color = Color.White,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
@@ -31,9 +31,9 @@ fun RegisterScreenUser(navController: NavController) {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun RegisterScreen2Preview(){
+fun PrincipalVetScreenPreview() {
     val navController = rememberNavController()
-    RegisterScreenUser(navController = navController)
+    PrincipalVetScreen(navController = navController)
 }
