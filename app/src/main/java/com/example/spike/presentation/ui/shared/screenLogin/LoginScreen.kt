@@ -47,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spike.R
+import com.example.spike.presentation.navigation.Destination
 
 
 @Composable
@@ -78,7 +79,6 @@ fun FiveSidedShape() {
         )
     }
 }
-
 @Composable
 fun LoginScreen(
     navController: NavHostController,
@@ -234,13 +234,13 @@ fun LoginScreen(
                 if (loginState != null && loginState.token != null) {
                     when (loginState.user.role) {
                         "PET_OWNER" -> {
-                            navController.navigate("principalPetOwner") {
-                                popUpTo("login") { inclusive = true }
+                            navController.navigate(Destination.UserDestination.VetList.route) {
+                                popUpTo(Destination.Login.route) { inclusive = true }
                             }
                         }
                         "VETERINARY_OWNER" -> {
-                            navController.navigate("principalVet") {
-                                popUpTo("login") { inclusive = true }
+                            navController.navigate(Destination.VetDestination.PrincipalVetScreen.route) {
+                                popUpTo(Destination.Login.route) { inclusive = true }
                             }
                         }
                         else -> {
@@ -253,7 +253,6 @@ fun LoginScreen(
                     loginViewModel.errorMessage.value = "Login failed: Invalid credentials."
                 }
             }
-
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -275,7 +274,7 @@ fun LoginScreen(
 
             // Botón "Register"
             Button(
-                onClick = { navController.navigate("register") },
+                onClick = { navController.navigate(Destination.Register.route) },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -295,6 +294,7 @@ fun LoginScreenPreview() {
     val navController = rememberNavController()
     LoginScreen(navController = navController)
 }
+
 
 
 

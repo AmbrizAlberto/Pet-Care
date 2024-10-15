@@ -1,6 +1,8 @@
 package com.example.spike.presentation.ui.shared.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -10,9 +12,15 @@ import com.example.spike.presentation.ui.shared.screenRegister.ConfirmationScree
 import com.example.spike.presentation.ui.shared.screenRegister.RegisterScreen
 import com.example.spike.presentation.ui.shared.screenRegister.registerUser.RegisterScreenUser
 import com.example.spike.presentation.ui.shared.screenRegister.registerVet.RegisterScreenVet
+import com.example.spike.presentation.ui.user.mainScreen.PetCareCatalogueScreen
+import com.example.spike.presentation.ui.user.navigation.UserNavHost
+import com.example.spike.presentation.ui.vet.PrincipalVetScreen
+import com.example.spike.presentation.ui.vet.navigation.VetNavHost
 
 @Composable
 fun SharedNavHost(navController: NavHostController) {
+    val selectedItemIndexMenu = remember { mutableIntStateOf(0) }
+
     NavHost(
         navController = navController,
         startDestination = Destination.Login.route //
@@ -31,6 +39,12 @@ fun SharedNavHost(navController: NavHostController) {
         }
         composable(Destination.VetRegister.route) {
             RegisterScreenVet(navController)
+        }
+        composable(Destination.UserDestination.VetList.route) {
+            PetCareCatalogueScreen(selectedItemIndexMenu, navController)
+        }
+        composable(Destination.VetDestination.PrincipalVetScreen.route) {
+            PrincipalVetScreen(navController)
         }
     }
 }

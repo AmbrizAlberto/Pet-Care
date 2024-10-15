@@ -26,8 +26,7 @@ sealed class Destination(
     }
 
     sealed class VetDestination(route: String) : Destination(route) {
-        //        EJEMPLO
-        data object VetAppointments : VetDestination("vet_appointments")
+        data object PrincipalVetScreen : Destination("principal_vet_screen")
     }
 
 

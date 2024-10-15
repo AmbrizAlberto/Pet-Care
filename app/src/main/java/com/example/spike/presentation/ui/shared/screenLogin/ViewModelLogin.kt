@@ -24,11 +24,12 @@ class LoginViewModel : ViewModel() {
                 }
                 if (response.token != null) {
                     loginState.value = response
+                    println(response)
                 } else {
                     errorMessage.value = "Login failed: "
                 }
             } catch (e: Exception) {
-                errorMessage.value = "Login failed: ${e.message}"
+                errorMessage.value = "Login failed due to an exception: ${e.message}"
             } finally {
                 isLoading.value = false
             }

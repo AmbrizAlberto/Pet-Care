@@ -2,6 +2,7 @@ package com.example.spike.presentation.ui
 
 import androidx.annotation.DrawableRes
 import com.example.spike.R
+import com.example.spike.presentation.navigation.Destination
 
 data class Menu(val id: Int, val title: String, @DrawableRes val icon: Int, val url: String)
 

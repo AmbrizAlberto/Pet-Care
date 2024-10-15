@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun getUserRole(): String {
-        val exampleUser = User("Test", "user")
+        val exampleUser = User("Test", "notuser")
 
         return exampleUser.role
     }
