@@ -3,55 +3,46 @@ package com.example.spike.app.host
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.compose.material3.Surface
 import androidx.navigation.compose.rememberNavController
-import com.example.spike.presentation.navigation.Destination
-import com.example.spike.presentation.theme.SpikeTheme
-import com.example.spike.presentation.ui.mainScreen.PetCareCatalogueScreen
-import com.example.spike.presentation.ui.profileScreen.ProfileScreen
+import androidx.compose.ui.Modifier
+
+//Pantallas
+import com.example.spike.data.model.User
+import com.example.spike.presentation.ui.admin.navigation.AdminNavHost
+import com.example.spike.presentation.ui.shared.navigation.SharedNavHost
+import com.example.spike.presentation.ui.theme.SpikeTheme
+import com.example.spike.presentation.ui.user.navigation.UserNavHost
+import com.example.spike.presentation.ui.vet.navigation.VetNavHost
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
         setContent {
             SpikeTheme {
-                val navController = rememberNavController()
-                val selectedItemIndexMenu = remember { mutableIntStateOf(0) }
-                NavHost(
-                    navController = navController,
-                    startDestination = Destination.VetList.route
-                ) {
-                    composable(
-                        route = Destination.VetList.route
-                    ) {
-                        PetCareCatalogueScreen(
-                            selectedItemIndexMenu = selectedItemIndexMenu,
-                            navController = navController
-                        )
-                    }
-                    composable(
-                        route = Destination.Profile.route
-                    ) {
-                        ProfileScreen(
-                            navController,
-                            selectedItemIndexMenu
-                        )
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    // Configurar el NavController
+                    val navController = rememberNavController()
+                    val userRole = getUserRole()
+
+                    when (userRole) {
+                        "admin" -> AdminNavHost(navController)
+                        "user" -> UserNavHost(navController)
+                        "vet" -> VetNavHost(navController)
+                        else -> SharedNavHost(navController) // Si no está autenticado o no tiene un rol válido
                     }
                 }
             }
         }
     }
+
+    private fun getUserRole(): String {
+        val exampleUser = User("Test", "user")
+
+        return exampleUser.role
+    }
 }
+
+
