@@ -123,7 +123,7 @@ fun DashboardScreen() {
                 )
 
                 {
-                    DashboardIcon(R.drawable.ic_clients, "Clientes")
+                    DashboardIcon(R.drawable.ic_clients, "Usuarios")
                     DashboardIcon(R.drawable.ic_staff, "Personal")
                     DashboardIcon(R.drawable.ic_consultations, "Consultas")
                 }
