@@ -1,4 +1,4 @@
-package com.example.spike.presentation.ui.shared.screenRegister
+package com.example.spike.presentation.ui.screenRegister
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

@@ -1,4 +1,4 @@
-package com.example.spike.presentation.ui.shared.screenRegister.registerUser
+package com.example.spike.presentation.ui.screenPrincipal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

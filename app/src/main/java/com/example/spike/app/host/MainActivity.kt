@@ -18,6 +18,14 @@ import com.example.spike.presentation.ui.shared.navigation.SharedNavHost
 import com.example.spike.presentation.ui.theme.SpikeTheme
 import com.example.spike.presentation.ui.user.navigation.UserNavHost
 import com.example.spike.presentation.ui.vet.navigation.VetNavHost
+import com.example.spike.presentation.ui.screenLogin.LoginScreen
+import com.example.spike.presentation.ui.screenPrincipal.PrincipalPetOwnerScreen
+import com.example.spike.presentation.ui.screenPrincipal.PrincipalVetScreen
+import com.example.spike.presentation.ui.screenRegister.ConfirmationScreen
+import com.example.spike.presentation.ui.screenRegister.RegisterScreen
+import com.example.spike.presentation.ui.screenRegister.registerUser.RegisterScreenUser
+import com.example.spike.presentation.ui.screenRegister.registerVet.RegisterScreenVet
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

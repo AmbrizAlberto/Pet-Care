@@ -1,6 +1,5 @@
 package com.example.spike.presentation.ui.shared.screenRegister
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
