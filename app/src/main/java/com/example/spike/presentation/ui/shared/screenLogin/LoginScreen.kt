@@ -20,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -66,8 +67,14 @@ fun FiveSidedShape() {
             lineTo(size.width, size.height * 0.5f) // Punto derecho superior
 
             // Redondear la punta superior
-            lineTo(size.width / 2 + 25.dp.toPx(), size.height * 0.25f + 25.dp.toPx()) // Ajustar para la esquina redondeada
-            lineTo(size.width / 2 - 25.dp.toPx(), size.height * 0.25f + 25.dp.toPx()) // Ajustar para la esquina redondeada
+            lineTo(
+                size.width / 2 + 25.dp.toPx(),
+                size.height * 0.25f + 25.dp.toPx()
+            ) // Ajustar para la esquina redondeada
+            lineTo(
+                size.width / 2 - 25.dp.toPx(),
+                size.height * 0.25f + 25.dp.toPx()
+            ) // Ajustar para la esquina redondeada
 
             close() // Cerrar la figura
         }
@@ -79,6 +86,7 @@ fun FiveSidedShape() {
         )
     }
 }
+
 @Composable
 fun LoginScreen(
     navController: NavHostController,
@@ -89,6 +97,7 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     val loginState = loginViewModel.loginState.value
+    val isLoading = loginViewModel.isLoading.value
     val errorMessage = loginViewModel.errorMessage.value
 
     Box(
@@ -96,6 +105,10 @@ fun LoginScreen(
             .fillMaxSize()
             .background(Color(0xFF3E4357))
     ) {
+        if (isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
+
         FiveSidedShape()
         Column(
             modifier = Modifier
@@ -231,27 +244,49 @@ fun LoginScreen(
 
             // Navegación a pantalla principal
             LaunchedEffect(loginState) {
-                if (loginState != null && loginState.token != null) {
-                    when (loginState.user.role) {
-                        "PET_OWNER" -> {
-                            navController.navigate(Destination.UserDestination.VetList.route) {
-                                popUpTo(Destination.Login.route) { inclusive = true }
+                loginState?.let { state ->
+                    state.user?.let { user ->
+                        when (user.role) {
+                            "PET_OWNER" -> {
+                                navController.navigate(Destination.UserDestination.VetList.route) {
+                                    popUpTo(Destination.Login.route) { inclusive = true }
+                                }
                             }
-                        }
-                        "VETERINARY_OWNER" -> {
-                            navController.navigate(Destination.VetDestination.PrincipalVetScreen.route) {
-                                popUpTo(Destination.Login.route) { inclusive = true }
+                            "VETERINARY_OWNER" -> {
+                                navController.navigate(Destination.VetDestination.PrincipalVetScreen.route) {
+                                    popUpTo(Destination.Login.route) { inclusive = true }
+                                }
                             }
-                        }
-                        else -> {
-                            Log.d("LoginDebug", "Unrecognized role: ${loginState.user.role}")
-                            loginViewModel.errorMessage.value = "Login failed: Unrecognized user type."
+                            else -> {
+                                loginViewModel.errorMessage.value = "Unrecognized user role"
+                            }
                         }
                     }
-                } else if (loginState != null && loginState.token == null) {
-                    // Mensaje de error si no existe token
-                    loginViewModel.errorMessage.value = "Login failed: Invalid credentials."
                 }
+//                if (loginState != null && loginState.token != null) {
+//                    when (loginState.user.role) {
+//                        "PET_OWNER" -> {
+//                            navController.navigate(Destination.UserDestination.VetList.route) {
+//                                popUpTo(Destination.Login.route) { inclusive = true }
+//                            }
+//                        }
+//
+//                        "VETERINARY_OWNER" -> {
+//                            navController.navigate(Destination.VetDestination.PrincipalVetScreen.route) {
+//                                popUpTo(Destination.Login.route) { inclusive = true }
+//                            }
+//                        }
+//
+//                        else -> {
+//                            Log.d("LoginDebug", "Unrecognized role: ${loginState.user.role}")
+//                            loginViewModel.errorMessage.value =
+//                                "Login failed: Unrecognized user type."
+//                        }
+//                    }
+//                } else if (loginState != null && loginState.token == null) {
+//                    // Mensaje de error si no existe token
+//                    loginViewModel.errorMessage.value = "Login failed: Invalid credentials."
+//                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
