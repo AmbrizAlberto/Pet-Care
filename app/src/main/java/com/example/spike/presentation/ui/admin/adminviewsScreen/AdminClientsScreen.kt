@@ -31,6 +31,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import com.example.spike.presentation.ui.adminviewsScreen.components.BaseLayoutAdminScreen
 import com.example.spike.R
@@ -75,16 +76,16 @@ fun ClientsCard() {
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .animateContentSize(  // Animación para el cambio de tamaño
+            .shadow(8.dp, shape = RoundedCornerShape(16.dp))
+            .animateContentSize(
                 animationSpec = tween(
-                    durationMillis = 300,  // Duración de la animación
+                    durationMillis = 300,
                     easing = FastOutSlowInEasing
                 )
             )
             .background(Color(0xFF39434F), RoundedCornerShape(20.dp)),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF39434F)),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Column(
             modifier = Modifier.padding(start = 16.dp, top = 23.dp, end = 16.dp, bottom = 16.dp),
