@@ -20,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -47,6 +48,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spike.R
+import com.example.spike.presentation.navigation.Destination
 
 
 @Composable
@@ -65,8 +67,14 @@ fun FiveSidedShape() {
             lineTo(size.width, size.height * 0.5f) // Punto derecho superior
 
             // Redondear la punta superior
-            lineTo(size.width / 2 + 25.dp.toPx(), size.height * 0.25f + 25.dp.toPx()) // Ajustar para la esquina redondeada
-            lineTo(size.width / 2 - 25.dp.toPx(), size.height * 0.25f + 25.dp.toPx()) // Ajustar para la esquina redondeada
+            lineTo(
+                size.width / 2 + 25.dp.toPx(),
+                size.height * 0.25f + 25.dp.toPx()
+            ) // Ajustar para la esquina redondeada
+            lineTo(
+                size.width / 2 - 25.dp.toPx(),
+                size.height * 0.25f + 25.dp.toPx()
+            ) // Ajustar para la esquina redondeada
 
             close() // Cerrar la figura
         }
@@ -89,6 +97,7 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     val loginState = loginViewModel.loginState.value
+    val isLoading = loginViewModel.isLoading.value
     val errorMessage = loginViewModel.errorMessage.value
 
     Box(
@@ -96,6 +105,10 @@ fun LoginScreen(
             .fillMaxSize()
             .background(Color(0xFF3E4357))
     ) {
+        if (isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
+
         FiveSidedShape()
         Column(
             modifier = Modifier
@@ -231,21 +244,43 @@ fun LoginScreen(
 
             // Navegación a pantalla principal
             LaunchedEffect(loginState) {
+//                loginState?.let { state ->
+//                    state.user?.let { user ->
+//                        when (user.role) {
+//                            "PET_OWNER" -> {
+//                                navController.navigate(Destination.UserDestination.VetList.route) {
+//                                    popUpTo(Destination.Login.route) { inclusive = true }
+//                                }
+//                            }
+//                            "VETERINARY_OWNER" -> {
+//                                navController.navigate(Destination.VetDestination.PrincipalVetScreen.route) {
+//                                    popUpTo(Destination.Login.route) { inclusive = true }
+//                                }
+//                            }
+//                            else -> {
+//                                loginViewModel.errorMessage.value = "Unrecognized user role"
+//                            }
+//                        }
+//                    }
+//                }
                 if (loginState != null && loginState.token != null) {
                     when (loginState.user.role) {
                         "PET_OWNER" -> {
-                            navController.navigate("principalPetOwner") {
-                                popUpTo("login") { inclusive = true }
+                            navController.navigate(Destination.UserDestination.VetList.route) {
+                                popUpTo(Destination.Login.route) { inclusive = true }
                             }
                         }
+
                         "VETERINARY_OWNER" -> {
-                            navController.navigate("principalVet") {
-                                popUpTo("login") { inclusive = true }
+                            navController.navigate(Destination.VetDestination.PrincipalVetScreen.route) {
+                                popUpTo(Destination.Login.route) { inclusive = true }
                             }
                         }
+
                         else -> {
                             Log.d("LoginDebug", "Unrecognized role: ${loginState.user.role}")
-                            loginViewModel.errorMessage.value = "Login failed: Unrecognized user type."
+                            loginViewModel.errorMessage.value =
+                                "Login failed: Unrecognized user type."
                         }
                     }
                 } else if (loginState != null && loginState.token == null) {
@@ -253,7 +288,6 @@ fun LoginScreen(
                     loginViewModel.errorMessage.value = "Login failed: Invalid credentials."
                 }
             }
-
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -275,7 +309,7 @@ fun LoginScreen(
 
             // Botón "Register"
             Button(
-                onClick = { navController.navigate("register") },
+                onClick = { navController.navigate(Destination.Register.route) },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -295,6 +329,7 @@ fun LoginScreenPreview() {
     val navController = rememberNavController()
     LoginScreen(navController = navController)
 }
+
 
 
 

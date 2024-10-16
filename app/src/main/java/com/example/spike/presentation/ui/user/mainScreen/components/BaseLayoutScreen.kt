@@ -27,15 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spike.presentation.ui.Menu
-import com.example.spike.presentation.ui.user.mainScreen.SearchSection
-import com.example.spike.presentation.ui.user.mainScreen.SectionCategoryListHorizontal
 import com.example.spike.presentation.ui.user.mainScreen.VerticalSpacer
-import com.example.spike.presentation.ui.user.mainScreen.TopBarSection
 import com.example.spike.presentation.ui.theme.colorBlack
 import com.example.spike.presentation.ui.theme.grayBackground
 import com.example.spike.presentation.ui.theme.white700
 import com.example.spike.presentation.ui.menuItems
-
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun BaseLayoutScreen(
@@ -43,6 +40,16 @@ fun BaseLayoutScreen(
     selectedItemIndexMenu: MutableState<Int>,
     content: @Composable () -> Unit
 ) {
+    // Controlador para UI del sistema (barra de estado)
+    val systemUiController = rememberSystemUiController()
+    val useDarkIcons = false
+
+    // Cambiar el color de la barra de estado
+    systemUiController.setStatusBarColor(
+        color = grayBackground,
+        darkIcons = useDarkIcons
+    )
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -120,6 +127,6 @@ fun BaseLayoutScreenPreview() {
         navController = navController,
         selectedItemIndexMenu = selectedItemIndexMenu
     ) {
-//        Contenido
+        // Contenido
     }
 }

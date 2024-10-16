@@ -1,4 +1,4 @@
-package com.example.spike.presentation.ui.shared.screenPrincipal
+package com.example.spike.presentation.ui.vet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -12,18 +12,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun PrincipalPetOwnerScreen(navController: NavController) {
+fun PrincipalVetScreen(navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF243748)),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = "Hola, dueño de mascota/s",
+            text = "Hola, veterinaria",
             color = Color.White,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
@@ -33,7 +34,7 @@ fun PrincipalPetOwnerScreen(navController: NavController) {
 
 @Preview(showBackground = true)
 @Composable
-fun PrincipalPetOwnerScreenPreview() {
+fun PrincipalVetScreenPreview() {
     val navController = rememberNavController()
-    PrincipalPetOwnerScreen(navController = navController)
+    PrincipalVetScreen(navController = navController)
 }

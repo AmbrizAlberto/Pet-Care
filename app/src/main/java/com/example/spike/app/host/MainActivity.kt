@@ -5,16 +5,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.remember
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 //Pantallas
 import com.example.spike.data.model.User
-import com.example.spike.presentation.ui.admin.navigation.AdminNavHost
-import com.example.spike.presentation.ui.shared.navigation.SharedNavHost
+import com.example.spike.presentation.navigation.Destination
+import com.example.spike.presentation.navigation.GeneralNavHost
+import com.example.spike.presentation.ui.shared.screenLogin.LoginViewModel
 import com.example.spike.presentation.ui.theme.SpikeTheme
-import com.example.spike.presentation.ui.user.navigation.UserNavHost
-import com.example.spike.presentation.ui.vet.navigation.VetNavHost
+import kotlin.math.log
 
 
 class MainActivity : ComponentActivity() {
@@ -26,20 +28,18 @@ class MainActivity : ComponentActivity() {
                     // Configurar el NavController
                     val navController = rememberNavController()
                     val userRole = getUserRole()
+//                    val loginViewModel = viewModel<LoginViewModel>()
+//                    val loginState = loginViewModel.loginState.value
 
-                    when (userRole) {
-                        "admin" -> AdminNavHost(navController)
-                        "user" -> UserNavHost(navController)
-                        "vet" -> VetNavHost(navController)
-                        else -> SharedNavHost(navController) // Si no está autenticado o no tiene un rol válido
-                    }
+                    GeneralNavHost(navController)
+
                 }
             }
         }
     }
 
     private fun getUserRole(): String {
-        val exampleUser = User("Test", "user")
+        val exampleUser = User("Test", "notuser")
 
         return exampleUser.role
     }
