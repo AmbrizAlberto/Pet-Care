@@ -244,49 +244,49 @@ fun LoginScreen(
 
             // Navegación a pantalla principal
             LaunchedEffect(loginState) {
-                loginState?.let { state ->
-                    state.user?.let { user ->
-                        when (user.role) {
-                            "PET_OWNER" -> {
-                                navController.navigate(Destination.UserDestination.VetList.route) {
-                                    popUpTo(Destination.Login.route) { inclusive = true }
-                                }
-                            }
-                            "VETERINARY_OWNER" -> {
-                                navController.navigate(Destination.VetDestination.PrincipalVetScreen.route) {
-                                    popUpTo(Destination.Login.route) { inclusive = true }
-                                }
-                            }
-                            else -> {
-                                loginViewModel.errorMessage.value = "Unrecognized user role"
-                            }
-                        }
-                    }
-                }
-//                if (loginState != null && loginState.token != null) {
-//                    when (loginState.user.role) {
-//                        "PET_OWNER" -> {
-//                            navController.navigate(Destination.UserDestination.VetList.route) {
-//                                popUpTo(Destination.Login.route) { inclusive = true }
+//                loginState?.let { state ->
+//                    state.user?.let { user ->
+//                        when (user.role) {
+//                            "PET_OWNER" -> {
+//                                navController.navigate(Destination.UserDestination.VetList.route) {
+//                                    popUpTo(Destination.Login.route) { inclusive = true }
+//                                }
 //                            }
-//                        }
-//
-//                        "VETERINARY_OWNER" -> {
-//                            navController.navigate(Destination.VetDestination.PrincipalVetScreen.route) {
-//                                popUpTo(Destination.Login.route) { inclusive = true }
+//                            "VETERINARY_OWNER" -> {
+//                                navController.navigate(Destination.VetDestination.PrincipalVetScreen.route) {
+//                                    popUpTo(Destination.Login.route) { inclusive = true }
+//                                }
 //                            }
-//                        }
-//
-//                        else -> {
-//                            Log.d("LoginDebug", "Unrecognized role: ${loginState.user.role}")
-//                            loginViewModel.errorMessage.value =
-//                                "Login failed: Unrecognized user type."
+//                            else -> {
+//                                loginViewModel.errorMessage.value = "Unrecognized user role"
+//                            }
 //                        }
 //                    }
-//                } else if (loginState != null && loginState.token == null) {
-//                    // Mensaje de error si no existe token
-//                    loginViewModel.errorMessage.value = "Login failed: Invalid credentials."
 //                }
+                if (loginState != null && loginState.token != null) {
+                    when (loginState.user.role) {
+                        "PET_OWNER" -> {
+                            navController.navigate(Destination.UserDestination.VetList.route) {
+                                popUpTo(Destination.Login.route) { inclusive = true }
+                            }
+                        }
+
+                        "VETERINARY_OWNER" -> {
+                            navController.navigate(Destination.VetDestination.PrincipalVetScreen.route) {
+                                popUpTo(Destination.Login.route) { inclusive = true }
+                            }
+                        }
+
+                        else -> {
+                            Log.d("LoginDebug", "Unrecognized role: ${loginState.user.role}")
+                            loginViewModel.errorMessage.value =
+                                "Login failed: Unrecognized user type."
+                        }
+                    }
+                } else if (loginState != null && loginState.token == null) {
+                    // Mensaje de error si no existe token
+                    loginViewModel.errorMessage.value = "Login failed: Invalid credentials."
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
