@@ -26,7 +26,7 @@ fun GeneralNavHost(navController: NavHostController) {
     ) {
 //        Shared
         composable(Destination.Login.route) {
-            LoginScreen(navController)
+            LoginScreen(navController, selectedItemIndexMenu = selectedItemIndexMenu)
         }
         composable(Destination.Register.route) {
             RegisterScreen(navController)

@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -92,6 +93,7 @@ fun FiveSidedShape() {
 fun LoginScreen(
     navController: NavHostController,
     loginViewModel: LoginViewModel = viewModel(),
+    selectedItemIndexMenu: MutableState<Int>,
     modifier: Modifier = Modifier
 ) {
     var username by remember { mutableStateOf("") }
@@ -108,11 +110,8 @@ fun LoginScreen(
             .fillMaxSize()
             .background(Color(0xFF3E4357))
     ) {
-        if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        }
-
         FiveSidedShape()
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -251,12 +250,14 @@ fun LoginScreen(
                 if (loginState != null && loginState.token != null) {
                     when (loginState.user.role) {
                         "PET_OWNER" -> {
+                            selectedItemIndexMenu.value = 0
                             navController.navigate(Destination.UserDestination.VetList.route) {
                                 popUpTo(Destination.Login.route) { inclusive = true }
                             }
                         }
 
                         "VETERINARY_OWNER" -> {
+                            selectedItemIndexMenu.value = 0
                             navController.navigate(Destination.VetDestination.PrincipalVetScreen.route) {
                                 popUpTo(Destination.Login.route) { inclusive = true }
                             }
@@ -305,6 +306,17 @@ fun LoginScreen(
                 Text("Register", fontSize = 18.sp, color = Color(0xFF3E4357))
             }
         }
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+
+            }
+        }
     }
 }
 
@@ -312,7 +324,9 @@ fun LoginScreen(
 @Composable
 fun LoginScreenPreview() {
     val navController = rememberNavController()
-    LoginScreen(navController = navController)
+    val selectedItemIndexMenu: MutableState<Int> = remember { mutableStateOf(0) }
+
+    LoginScreen(navController = navController, selectedItemIndexMenu = selectedItemIndexMenu)
 }
 
 
