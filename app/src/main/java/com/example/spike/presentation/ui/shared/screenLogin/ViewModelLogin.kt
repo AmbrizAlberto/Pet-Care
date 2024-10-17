@@ -1,10 +1,11 @@
 package com.example.spike.presentation.ui.shared.screenLogin
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spike.app.data.network.LoginRequest
-import com.example.spike.app.data.network.LoginResponse
+import com.example.spike.app.data.network.model.LoginResponse
+import com.example.spike.app.data.network.model.LoginRequest
 import com.example.spike.app.data.network.RetrofitInstance
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +16,7 @@ class LoginViewModel : ViewModel() {
     var isLoading = mutableStateOf(false)
     var errorMessage = mutableStateOf<String?>(null)
 
-    fun login(email: String, password: String) {
+    fun login(email: String, password: String, context: Context) {
         viewModelScope.launch {
             isLoading.value = true
             try {
@@ -23,7 +24,15 @@ class LoginViewModel : ViewModel() {
                     RetrofitInstance.api.login(LoginRequest(email, password))
                 }
                 if (response.token != null) {
+                    val sharedPreferences =
+                        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                    with(sharedPreferences.edit()) {
+                        putString("user_token", response.token)
+                        apply()
+                    }
                     loginState.value = response
+
+//                    Guardar
                     println(response)
                 } else {
                     errorMessage.value = "Login failed: "

@@ -59,9 +59,6 @@ fun GeneralNavHost(navController: NavHostController) {
         composable(Destination.VetDestination.PrincipalVetScreen.route) {
             PrincipalVetScreen(navController)
         }
-        composable(Destination.VetDestination.PrincipalVetScreen.route) {
-            PrincipalVetScreen(navController)
-        }
 
     }
 }

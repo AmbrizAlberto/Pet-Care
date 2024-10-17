@@ -1,5 +1,6 @@
 package com.example.spike.presentation.ui.user.profileScreen
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spike.R
+import com.example.spike.presentation.navigation.Destination
 import com.example.spike.presentation.ui.user.mainScreen.VerticalSpacer
 import com.example.spike.presentation.ui.user.mainScreen.components.BaseLayoutScreen
 import com.example.spike.presentation.ui.theme.colorLight
@@ -96,13 +99,27 @@ fun ProfileHeader() {
     }
 }
 
+fun handleLogout(navController: NavHostController, context: Context) {
+    val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    with(sharedPreferences.edit()) {
+        remove("user_token")
+        apply()
+    }
+
+    navController.navigate(Destination.Login.route) {
+        popUpTo(Destination.Login.route) { inclusive }
+    }
+}
+
 @Composable
 fun ProfileOptions(navController: NavHostController) {
+    val context = LocalContext.current
+
     Column(modifier = Modifier.fillMaxWidth()) {
         ProfileOptionItem("Edit profile", onClick = { })
         ProfileOptionItem("My appointments", onClick = { })
         ProfileOptionItem("Settings", onClick = { })
-        ProfileOptionItem("Logout", onClick = { })
+        ProfileOptionItem("Logout", onClick = { handleLogout(navController, context) })
     }
 }
 

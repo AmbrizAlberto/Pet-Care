@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -99,6 +100,8 @@ fun LoginScreen(
     val loginState = loginViewModel.loginState.value
     val isLoading = loginViewModel.isLoading.value
     val errorMessage = loginViewModel.errorMessage.value
+
+    val context = LocalContext.current
 
     Box(
         modifier = modifier
@@ -225,7 +228,7 @@ fun LoginScreen(
             Button(
                 onClick = {
                     if (username.isNotEmpty() && password.isNotEmpty()) {
-                        loginViewModel.login(username, password)
+                        loginViewModel.login(username, password, context)
                     } else {
                         loginViewModel.errorMessage.value = "Please fill in all fields."
                     }
@@ -244,25 +247,7 @@ fun LoginScreen(
 
             // Navegación a pantalla principal
             LaunchedEffect(loginState) {
-//                loginState?.let { state ->
-//                    state.user?.let { user ->
-//                        when (user.role) {
-//                            "PET_OWNER" -> {
-//                                navController.navigate(Destination.UserDestination.VetList.route) {
-//                                    popUpTo(Destination.Login.route) { inclusive = true }
-//                                }
-//                            }
-//                            "VETERINARY_OWNER" -> {
-//                                navController.navigate(Destination.VetDestination.PrincipalVetScreen.route) {
-//                                    popUpTo(Destination.Login.route) { inclusive = true }
-//                                }
-//                            }
-//                            else -> {
-//                                loginViewModel.errorMessage.value = "Unrecognized user role"
-//                            }
-//                        }
-//                    }
-//                }
+
                 if (loginState != null && loginState.token != null) {
                     when (loginState.user.role) {
                         "PET_OWNER" -> {

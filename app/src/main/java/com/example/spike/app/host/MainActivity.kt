@@ -1,5 +1,6 @@
 package com.example.spike.app.host
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,22 +28,30 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     // Configurar el NavController
                     val navController = rememberNavController()
-                    val userRole = getUserRole()
-//                    val loginViewModel = viewModel<LoginViewModel>()
-//                    val loginState = loginViewModel.loginState.value
+                    val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                    val token = sharedPreferences.getString("user_token", null)
 
-                    GeneralNavHost(navController)
+                    GeneralNavHost(navController = navController)
+
+                    if (token != null) {
+                        navController.navigate(Destination.UserDestination.VetList.route) {
+                            popUpTo(Destination.Login.route) { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate(Destination.Login.route)
+                    }
+
 
                 }
             }
         }
     }
 
-    private fun getUserRole(): String {
-        val exampleUser = User("Test", "notuser")
-
-        return exampleUser.role
-    }
+//    private fun getUserRole(): String {
+//        val exampleUser = User("Test", "notuser")
+//
+//        return exampleUser.role
+//    }
 }
 
 
