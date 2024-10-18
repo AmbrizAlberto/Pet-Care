@@ -5,6 +5,7 @@ import android.icu.text.ListFormatter.Width
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,25 +39,80 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spike.R
+import com.example.spike.data.model.VetItemData
 import com.example.spike.presentation.ui.categories
+import com.example.spike.presentation.ui.theme.bluePalette
 import com.example.spike.presentation.ui.user.mainScreen.components.BaseLayoutScreen
 import com.example.spike.presentation.ui.theme.colorBlack
+import com.example.spike.presentation.ui.theme.darkCementPalette
 import com.example.spike.presentation.ui.theme.grayBackground
 import com.example.spike.presentation.ui.theme.grayContent
 import com.example.spike.presentation.ui.theme.white700
 
 // Simulando listas de elementos para cada categoría
 val categoryItems = listOf(
-    listOf("Item A1", "Item A2", "Item A3"),
-    listOf("Item B1", "Item B2", "Item B3"),
-    listOf("Item C1", "Item C2", "Item C3"),
+    VetItemData(
+        name = "Pawfect Care",
+        address = "123 Elm Street, Cityville",
+        description = "Veterinaria general con atención de lunes a sábado.",
+        imageRes = R.drawable.vet_example,
+        category = "Atención"
+    ),
+    VetItemData(
+        name = "Pawfect Care",
+        address = "123 Elm Street, Cityville",
+        description = "Veterinaria general con atención de lunes a sábado.",
+        imageRes = R.drawable.vet_example,
+        category = "Atención"
+    ),
+    VetItemData(
+        name = "Pawfect Care",
+        address = "123 Elm Street, Cityville",
+        description = "Veterinaria general con atención de lunes a sábado.",
+        imageRes = R.drawable.vet_example,
+        category = "Atención"
+    ),
+    VetItemData(
+        name = "Happy Paws Clinic",
+        address = "45 Oak Avenue, Cityville",
+        description = "Clínica especializada en mascotas pequeñas.",
+        imageRes = R.drawable.vet_example,
+        category = "Nutrición"
+    ),
+    VetItemData(
+        name = "Healthy Tails",
+        address = "67 Maple Boulevard, Townsville",
+        description = "Ofrecemos cuidados preventivos y vacunas.",
+        imageRes = R.drawable.vet_example,
+        category = "Recreación"
+    ),
+    VetItemData(
+        name = "Pet Experts",
+        address = "89 Pine Road, Cityville",
+        description = "Especialistas en cirugía y traumatología animal.",
+        imageRes = R.drawable.vet_example,
+        category = "Atención"
+    ),
+    VetItemData(
+        name = "24/7 Vet Care",
+        address = "456 Birch Lane, Cityville",
+        description = "Atención de emergencias las 24 horas.",
+        imageRes = R.drawable.vet_example,
+        category = "Atención"
+    )
 )
+
+fun filterByCategory(category: String, items: List<VetItemData>): List<VetItemData> {
+    return items.filter { it.category == category }
+}
 
 @Composable
 fun PetCareCatalogueScreen(
@@ -64,10 +120,10 @@ fun PetCareCatalogueScreen(
     selectedItemIndexMenu: MutableState<Int>,
     navController: NavHostController,
 ) {
+    val selectedCategory = remember { mutableStateOf("Atención") }
     val selectedIndex = remember {
         mutableIntStateOf(0)
     }
-
 
     BaseLayoutScreen(
         navController = navController,
@@ -84,10 +140,11 @@ fun PetCareCatalogueScreen(
         ) {
             TopBarSection()
             SearchSection()
+            VerticalSpacer(height = 10)
+//            SectionCategoryListHorizontal(selectedIndex = selectedIndex)
+            CategoryFilterSection(selectedCategory)
             VerticalSpacer(height = 20)
-            SectionCategoryListHorizontal(selectedIndex = selectedIndex)
-            VerticalSpacer(height = 20)
-            CategoryItemList(items = categoryItems[selectedIndex.value])
+            CategoryItemList(items = filterByCategory(selectedCategory.value, categoryItems))
         }
     }
 }
@@ -157,53 +214,41 @@ fun SearchSection() {
 }
 
 @Composable
-fun CategoryTitle(category: Any, isSelected: Boolean, modifier: Modifier) {
-    Box(
-        modifier = modifier
-    ) {
-        Text(
-            text = category.toString(),
-            style = if (isSelected) {
-                MaterialTheme.typography.titleMedium
-            } else {
-                MaterialTheme.typography.bodyLarge
-            },
-            color = white700
-        )
-    }
-
-}
-
-@Composable
-fun SectionCategoryListHorizontal(selectedIndex: MutableState<Int>) {
+fun CategoryFilterSection(selectedCategory: MutableState<String>) {
+    val categories = listOf("Nutrición", "Atención", "Recreación")
     LazyRow(
         horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
-        itemsIndexed(categories) { index, item ->
-            val isSelected = index == selectedIndex.value
-            CategoryTitle(
-                category = item,
-                isSelected = isSelected,
+        items(categories) { category ->
+            Text(
+                text = category,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .selectable(
-                        selected = isSelected,
-                        enabled = true,
-                        onClick = { selectedIndex.value = index }
-                    )
+                    .padding(2.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(if (selectedCategory.value == category) bluePalette else darkCementPalette)
+                    .padding(16.dp)
+                    .clickable { selectedCategory.value = category }
+                ,
+                color = Color.White,
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }
 }
 
 @Composable
-fun CategoryItemList(items: List<String>) {
+fun CategoryItemList(items: List<VetItemData>) {
+
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 5.dp,
+                bottom = 5.dp
+            )
     ) {
         items(items) { item ->
             Box(
@@ -211,26 +256,52 @@ fun CategoryItemList(items: List<String>) {
                     .fillMaxWidth()
                     .padding(vertical = 8.dp) // Espaciado entre elementos
                     .clip(RoundedCornerShape(15.dp))
-                    .background(grayContent)
-                    .padding(20.dp), //Espaciado interior
+                    .background(darkCementPalette)
+                    .padding(16.dp), //Espaciado interior
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.Start
                 ) {
-                    Text(text = "imagen")
-                    HorizontalSpacer(width = 10)
-                    Text(
-                        text = item,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = white700,
+                    // Imagen de la veterinaria
+                    Image(
+                        painter = painterResource(id = item.imageRes),
+                        contentDescription = item.name,
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color.LightGray),
+                        contentScale = ContentScale.Crop
                     )
+                    HorizontalSpacer(16)
+                    Column(
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = item.name,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                        Text(
+                            text = item.address,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                        )
+                        Text(
+                            text = item.description,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = white700,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 }
             }
         }
     }
-
 }
+
 
 @Composable
 fun VerticalSpacer(height: Int) {
@@ -247,6 +318,8 @@ fun HorizontalSpacer(width: Int) {
 fun PetCareCataloguePreview() {
     val selectedItemIndexMenu: MutableState<Int> = remember { mutableStateOf(0) }
     val navController = rememberNavController()
+    val selectedCategory = remember { mutableStateOf("Atención") }
+
 
     BaseLayoutScreen(
         navController = navController,
@@ -264,9 +337,10 @@ fun PetCareCataloguePreview() {
             TopBarSection()
             SearchSection()
             VerticalSpacer(height = 20)
-            SectionCategoryListHorizontal(selectedItemIndexMenu)
+//            SectionCategoryListHorizontal(selectedItemIndexMenu)
+            CategoryFilterSection(selectedCategory)
             VerticalSpacer(height = 20)
-            CategoryItemList(items = categoryItems[selectedItemIndexMenu.value])
+            CategoryItemList(items = filterByCategory(selectedCategory.value, categoryItems))
         }
     }
 }
