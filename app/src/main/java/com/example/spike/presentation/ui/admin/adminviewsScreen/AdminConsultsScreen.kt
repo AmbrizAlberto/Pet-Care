@@ -10,6 +10,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +26,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import com.example.spike.presentation.ui.adminviewsScreen.components.BaseLayoutAdminScreen
 import com.example.spike.R
+import com.example.spike.presentation.ui.adminviewsScreen.components.AdminOptionsMenu
+import com.example.spike.presentation.ui.adminviewsScreen.components.AlertDialogExample
+import com.example.spike.presentation.ui.adminviewsScreen.components.forms.EditConsultsBottomSheet
 
 @Composable
 fun AdminConsultsScreen() {
@@ -38,14 +45,18 @@ fun ConsultsList() {
         contentPadding = PaddingValues(horizontal = 21.dp, vertical = 8.dp)
     ) {
         items(3) {
-            ConsultCard()
+            ConsultsCard()
             Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }
 
 @Composable
-fun ConsultCard() {
+fun ConsultsCard() {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showConsultsEditForm by remember { mutableStateOf(false) }
+    var showViewDialog by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -109,15 +120,18 @@ fun ConsultCard() {
             Column(
                 horizontalAlignment = Alignment.End
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_options),
+                Box(
                     modifier = Modifier
-                        .size(30.dp)
-                        .offset(y = (-10).dp, x = (-2).dp),
-                    contentDescription = "Opciones",
-                    tint = Color.White
-                )
-                Spacer(modifier = Modifier.height(50.dp))
+                        .offset(x = (5).dp, y = (-15).dp)
+                ) {
+                    AdminOptionsMenu(
+                        onDelete = { showDeleteDialog = true },
+                        onEdit = { showConsultsEditForm = true },
+                        onView = { showViewDialog = true },
+
+                        )
+                }
+                Spacer(modifier = Modifier.height(30.dp))
                 TextButton(
                     onClick = { },
                     shape = RoundedCornerShape(10.dp),
@@ -135,8 +149,39 @@ fun ConsultCard() {
             }
         }
     }
-}
 
+    if (showConsultsEditForm) {
+        EditConsultsBottomSheet(
+            isVisible = true,
+            onDismiss = { showConsultsEditForm = false },
+            onConfirm = { consult, petname, petservice, vetname, date ->
+                println("Guardando cambios: $consult, $petname, $petservice, $vetname, $date")
+                showConsultsEditForm = false
+            }
+        )
+    }
+
+    if (showDeleteDialog) {
+        AlertDialogExample(
+            onDismissRequest = { showDeleteDialog = false },
+            onConfirmation = {
+                showDeleteDialog = false
+            },
+            dialogTitle = "Confirmar eliminación",
+            dialogText = "¿Estás seguro de que quieres eliminar esta Consulta?"
+        )
+    }
+
+    if (showViewDialog) {
+        AlertDialogExample(
+            onDismissRequest = { showViewDialog = false },
+            onConfirmation = { showViewDialog = false },
+            dialogTitle = "Ver detalles del cliente",
+            dialogText = "Aquí se mostrarían los detalles completos esta Consulta?"
+        )
+    }
+
+}
 @Preview(showBackground = true)
 @Composable
 fun AdminConsultsScreenPreview() {

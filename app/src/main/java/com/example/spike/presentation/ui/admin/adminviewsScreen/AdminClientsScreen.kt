@@ -32,10 +32,12 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.graphicsLayer
+import com.example.spike.presentation.navigation.Destination
 import com.example.spike.presentation.ui.adminviewsScreen.components.BaseLayoutAdminScreen
+import com.example.spike.presentation.ui.adminviewsScreen.components.AlertDialogExample
+import com.example.spike.presentation.ui.adminviewsScreen.components.AdminOptionsMenu
+import com.example.spike.presentation.ui.adminviewsScreen.components.forms.EditClientsBottomSheet
 import com.example.spike.R
-
 
 
 @Composable
@@ -62,10 +64,12 @@ fun ClientsList() {
 @Composable
 fun ClientsCard() {
     var isExpanded by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showClientsEditForm by remember { mutableStateOf(false) }
+    var showViewDialog by remember { mutableStateOf(false) }
 
-    // Animación para la rotación del ícono de flecha
     val rotation by animateFloatAsState(
-        targetValue = if (isExpanded) 180f else 0f,  // Rota el ícono 180 grados
+        targetValue = if (isExpanded) 180f else 0f,
         animationSpec = tween(
             durationMillis = 300,
             easing = FastOutSlowInEasing
@@ -124,35 +128,34 @@ fun ClientsCard() {
                         modifier = Modifier.padding(bottom = 0.8.dp)
                     )
                 }
-                Spacer(modifier = Modifier.width(16.dp))
                 Column(
-                    horizontalAlignment = Alignment.End
-                ) {
-                    Icon(
-                        painter = painterResource(if (isExpanded) R.drawable.ic_arrowup else R.drawable.icon_arrowdown),
-                        modifier = Modifier
-                            .size(30.dp)
-                            .offset(y = (-15).dp, x = (-40).dp)
-                            .rotate(rotation)  // Aplica la animación de rotación al ícono
-                            .clickable {
-                                isExpanded = !isExpanded
-                            },
-                        contentDescription = if (isExpanded) "Contraer" else "Expandir",
-                        tint = Color.White
-                    )
+                    horizontalAlignment = Alignment.End,
+                    modifier = Modifier.offset(x = (-8).dp, y = (-40).dp)
 
-                    Icon(
-                        painter = painterResource(R.drawable.ic_options),
-                        modifier = Modifier
-                            .size(30.dp)
-                            .offset(y = (-46).dp, x = (-2).dp),
-                        contentDescription = "Opciones",
-                        tint = Color.White
-                    )
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(if (isExpanded) R.drawable.ic_arrowup else R.drawable.icon_arrowdown),
+                            modifier = Modifier
+                                .size(30.dp)
+                                .rotate(rotation)
+                                .clickable {
+                                    isExpanded = !isExpanded
+                                },
+                            contentDescription = if (isExpanded) "Contraer" else "Expandir",
+                            tint = Color.White
+                        )
+                        AdminOptionsMenu(
+                            onDelete = { showDeleteDialog = true },
+                            onEdit = { showClientsEditForm = true },
+                            onView = { showViewDialog = true }
+                        )
+                    }
                 }
             }
 
-            // Contenido adicional que solo aparece cuando la tarjeta está expandida
             if (isExpanded) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Column {
@@ -209,13 +212,46 @@ fun ClientsCard() {
             }
         }
     }
+
+    // Mostrar formulario de edición
+    if (showClientsEditForm) {
+        EditClientsBottomSheet(
+            isVisible = true,
+            onDismiss = { showClientsEditForm = false },
+            onConfirm = { vetname, phone, email, address ->
+                // Aquí iría la lógica para guardar los cambios
+                println("Guardando cambios: $vetname, $phone, $email, $address")
+                showClientsEditForm = false
+            }
+        )
+    }
+
+    if (showDeleteDialog) {
+        AlertDialogExample(
+            onDismissRequest = { showDeleteDialog = false },
+            onConfirmation = {
+                // Aquí simularíamos la eliminación
+                showDeleteDialog = false
+            },
+            dialogTitle = "Confirmar eliminación",
+            dialogText = "¿Estás seguro de que quieres eliminar este cliente?"
+        )
+    }
+
+    if (showViewDialog) {
+        AlertDialogExample(
+            onDismissRequest = { showViewDialog = false },
+            onConfirmation = { showViewDialog = false },
+            dialogTitle = "Ver detalles del cliente",
+            dialogText = "Aquí se mostrarían los detalles completos del cliente"
+        )
+
+    }
 }
-
-
 @Preview(showBackground = true)
 @Composable
 fun AdminClientsScreenPreview() {
     AdminClientsScreen()
-
-
 }
+
+

@@ -43,11 +43,11 @@ fun TopBar(title: String) {
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_menu),
-            contentDescription = "Menú",
+            contentDescription = "Opciones",
             tint = Color.White,
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .offset(x = (-10).dp) // Mueve el ícono 8dp a la izquierda
+                .offset(x = (-10).dp)
         )
 
 
@@ -76,7 +76,7 @@ fun SearchLayout() {
             .background(Color(0xFF4F545C), RoundedCornerShape(8.dp)),
         leadingIcon = {
             Icon(
-                painter = painterResource(R.drawable.ic_search), // Icono de lupa
+                painter = painterResource(R.drawable.ic_search),
                 contentDescription = "Buscar",
                 tint = Color.White
             )
