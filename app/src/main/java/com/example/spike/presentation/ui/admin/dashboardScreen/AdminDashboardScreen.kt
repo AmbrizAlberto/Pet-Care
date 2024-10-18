@@ -22,7 +22,7 @@ import androidx.compose.ui.draw.shadow
 import com.example.spike.R
 
 @Composable
-fun DashboardScreen() {
+fun AdminDashboardScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -187,5 +187,5 @@ fun DashboardIcon(iconResId: Int, label: String) {
 @Preview(showBackground = true)
 @Composable
 fun DashboardScreenPreview() {
-    DashboardScreen()
+    AdminDashboardScreen()
 }

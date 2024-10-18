@@ -6,6 +6,10 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.spike.presentation.ui.adminviewsScreen.AdminClientsScreen
+import com.example.spike.presentation.ui.adminviewsScreen.AdminConsultsScreen
+import com.example.spike.presentation.ui.adminviewsScreen.AdminUsersScreen
+import com.example.spike.presentation.ui.dashboardScreen.AdminDashboardScreen
 import com.example.spike.presentation.ui.shared.screenLogin.LoginScreen
 import com.example.spike.presentation.ui.shared.screenRegister.ConfirmationScreen
 import com.example.spike.presentation.ui.shared.screenRegister.RegisterScreen
@@ -22,7 +26,7 @@ fun GeneralNavHost(navController: NavHostController) {
 
     NavHost(
         navController = navController,
-        startDestination = Destination.Login.route //
+        startDestination = Destination.Login.route
     ) {
 //        Shared
         composable(Destination.Login.route) {
@@ -60,5 +64,18 @@ fun GeneralNavHost(navController: NavHostController) {
             PrincipalVetScreen(navController)
         }
 
+//      Admin
+        composable(Destination.AdminDestination.AdminUsers.route) {
+            AdminUsersScreen()
+        }
+        composable(Destination.AdminDestination.AdminConsults.route) {
+            AdminConsultsScreen()
+        }
+        composable(Destination.AdminDestination.AdminClients.route) {
+            AdminClientsScreen()
+        }
+        composable(Destination.AdminDestination.AdminDashboard.route) {
+            AdminDashboardScreen()
+        }
     }
 }
