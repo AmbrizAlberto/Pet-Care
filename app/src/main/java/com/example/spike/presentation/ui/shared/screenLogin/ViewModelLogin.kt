@@ -28,6 +28,7 @@ class LoginViewModel : ViewModel() {
                         context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
                     with(sharedPreferences.edit()) {
                         putString("user_token", response.token)
+                        putString("user_role", response.user.role)
                         apply()
                     }
                     loginState.value = response

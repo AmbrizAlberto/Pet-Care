@@ -30,13 +30,31 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
                     val token = sharedPreferences.getString("user_token", null)
+                    val role = sharedPreferences.getString("user_role", null)
 
                     GeneralNavHost(navController = navController)
 
                     if (token != null) {
-                        navController.navigate(Destination.UserDestination.VetList.route) {
-                            popUpTo(Destination.Login.route) { inclusive = true }
+                        when (role) {
+                            "PET_OWNER" -> {
+                                navController.navigate(Destination.UserDestination.VetList.route) {
+                                    popUpTo(Destination.Login.route) { inclusive = true }
+                                }
+                            }
+
+                            "VETERINARY_OWNER" -> {
+                                navController.navigate(Destination.VetDestination.PrincipalVetScreen.route) {
+                                    popUpTo(Destination.Login.route) { inclusive = true }
+                                }
+                            }
+
+                            "ADMIN" -> {
+                                navController.navigate(Destination.AdminDestination.AdminDashboard.route) {
+                                    popUpTo(Destination.Login.route) { inclusive = true }
+                                }
+                            }
                         }
+
                     } else {
                         navController.navigate(Destination.Login.route)
                     }
@@ -46,12 +64,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-//    private fun getUserRole(): String {
-//        val exampleUser = User("Test", "notuser")
-//
-//        return exampleUser.role
-//    }
 }
 
 
