@@ -38,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -53,6 +54,7 @@ import com.example.spike.presentation.ui.theme.bluePalette
 import com.example.spike.presentation.ui.user.mainScreen.components.BaseLayoutScreen
 import com.example.spike.presentation.ui.theme.colorBlack
 import com.example.spike.presentation.ui.theme.darkCementPalette
+import com.example.spike.presentation.ui.theme.graphitePalette
 import com.example.spike.presentation.ui.theme.grayBackground
 import com.example.spike.presentation.ui.theme.grayContent
 import com.example.spike.presentation.ui.theme.white700
@@ -64,49 +66,49 @@ val categoryItems = listOf(
         address = "123 Elm Street, Cityville",
         description = "Veterinaria general con atención de lunes a sábado.",
         imageRes = R.drawable.vet_example,
-        category = "Atención"
+        category = "medical"
     ),
     VetItemData(
         name = "Pawfect Care",
         address = "123 Elm Street, Cityville",
         description = "Veterinaria general con atención de lunes a sábado.",
         imageRes = R.drawable.vet_example,
-        category = "Atención"
+        category = "medical"
     ),
     VetItemData(
         name = "Pawfect Care",
         address = "123 Elm Street, Cityville",
         description = "Veterinaria general con atención de lunes a sábado.",
         imageRes = R.drawable.vet_example,
-        category = "Atención"
+        category = "medical"
     ),
     VetItemData(
         name = "Happy Paws Clinic",
         address = "45 Oak Avenue, Cityville",
         description = "Clínica especializada en mascotas pequeñas.",
         imageRes = R.drawable.vet_example,
-        category = "Nutrición"
+        category = "nutrition"
     ),
     VetItemData(
         name = "Healthy Tails",
         address = "67 Maple Boulevard, Townsville",
         description = "Ofrecemos cuidados preventivos y vacunas.",
         imageRes = R.drawable.vet_example,
-        category = "Recreación"
+        category = "nutrition"
     ),
     VetItemData(
         name = "Pet Experts",
         address = "89 Pine Road, Cityville",
         description = "Especialistas en cirugía y traumatología animal.",
         imageRes = R.drawable.vet_example,
-        category = "Atención"
+        category = "recreation"
     ),
     VetItemData(
         name = "24/7 Vet Care",
         address = "456 Birch Lane, Cityville",
         description = "Atención de emergencias las 24 horas.",
         imageRes = R.drawable.vet_example,
-        category = "Atención"
+        category = "medical"
     )
 )
 
@@ -120,9 +122,12 @@ fun PetCareCatalogueScreen(
     selectedItemIndexMenu: MutableState<Int>,
     navController: NavHostController,
 ) {
-    val selectedCategory = remember { mutableStateOf("Atención") }
+    val selectedCategory = remember { mutableStateOf("nutrition") }
     val selectedIndex = remember {
         mutableIntStateOf(0)
+    }
+    val searchText = remember {
+        mutableStateOf("")
     }
 
     BaseLayoutScreen(
@@ -139,9 +144,8 @@ fun PetCareCatalogueScreen(
                 )
         ) {
             TopBarSection()
-            SearchSection()
+            SearchSection(searchText)
             VerticalSpacer(height = 10)
-//            SectionCategoryListHorizontal(selectedIndex = selectedIndex)
             CategoryFilterSection(selectedCategory)
             VerticalSpacer(height = 20)
             CategoryItemList(items = filterByCategory(selectedCategory.value, categoryItems))
@@ -179,16 +183,15 @@ fun TopBarSection() {
 }
 
 @Composable
-fun SearchSection() {
+fun SearchSection(searchText: MutableState<String>) {
     Column(modifier = Modifier.padding(top = 20.dp)) {
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = searchText.value,
+            onValueChange = { searchText.value = it },
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_search),
                     contentDescription = "Search",
-                    tint = colorBlack,
                 )
             },
             modifier = Modifier
@@ -202,12 +205,14 @@ fun SearchSection() {
                     style = MaterialTheme.typography.labelMedium
                 )
             },
-//            colors = TextFieldColors(
-//                focusedContainerColor = Color.Transparent,
-//                disabledIndicatorColor = Color.Transparent,
-//                unfocusedIndicatorColor = Color.Transparent,
-//                ...
-//            )
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Gray,
+                focusedLeadingIconColor = Color.Black,
+                focusedIndicatorColor = Color.Black,
+                unfocusedContainerColor = Color.Transparent,
+                unfocusedLeadingIconColor = Color.Gray,
+
+            )
 
         )
     }
@@ -215,25 +220,46 @@ fun SearchSection() {
 
 @Composable
 fun CategoryFilterSection(selectedCategory: MutableState<String>) {
-    val categories = listOf("Nutrición", "Atención", "Recreación")
+    val categories = mapOf(
+        "nutrition" to "Nutrición",
+        "medical" to "Atención",
+        "recreation" to "Recreación"
+    )
+
     LazyRow(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxWidth()
     ) {
-        items(categories) { category ->
-            Text(
-                text = category,
-                modifier = Modifier
-                    .padding(2.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(if (selectedCategory.value == category) bluePalette else darkCementPalette)
-                    .padding(16.dp)
-                    .clickable { selectedCategory.value = category }
-                ,
-                color = Color.White,
-                style = MaterialTheme.typography.bodyMedium
+        items(categories.keys.toList()) { category ->
+            CategoryChip(
+                category = category,
+                displayText = categories[category] ?: category,
+                isSelected = selectedCategory.value == category,
+                onClick = { selectedCategory.value = category }
             )
         }
+    }
+}
+
+@Composable
+fun CategoryChip(category: String, displayText: String, isSelected: Boolean, onClick: () -> Unit) {
+    val backgroundColor = if (isSelected) bluePalette else darkCementPalette
+    val textColor = if (isSelected) Color.White else white700
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(backgroundColor)
+            .clickable { onClick() }
+            .padding(vertical = 8.dp, horizontal = 20.dp)
+        ,
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = displayText,
+            color = textColor,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
+        )
     }
 }
 
@@ -247,7 +273,7 @@ fun CategoryItemList(items: List<VetItemData>) {
                 start = 16.dp,
                 end = 16.dp,
                 top = 5.dp,
-                bottom = 5.dp
+                bottom = 85.dp
             )
     ) {
         items(items) { item ->
@@ -319,7 +345,9 @@ fun PetCareCataloguePreview() {
     val selectedItemIndexMenu: MutableState<Int> = remember { mutableStateOf(0) }
     val navController = rememberNavController()
     val selectedCategory = remember { mutableStateOf("Atención") }
-
+    val searchText = remember {
+        mutableStateOf("")
+    }
 
     BaseLayoutScreen(
         navController = navController,
@@ -335,7 +363,7 @@ fun PetCareCataloguePreview() {
                 )
         ) {
             TopBarSection()
-            SearchSection()
+            SearchSection(searchText)
             VerticalSpacer(height = 20)
 //            SectionCategoryListHorizontal(selectedItemIndexMenu)
             CategoryFilterSection(selectedCategory)
