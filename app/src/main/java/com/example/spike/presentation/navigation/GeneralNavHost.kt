@@ -75,7 +75,7 @@ fun GeneralNavHost(navController: NavHostController) {
             AdminClientsScreen()
         }
         composable(Destination.AdminDestination.AdminDashboard.route) {
-            AdminDashboardScreen()
+            AdminDashboardScreen(navController = navController)
         }
     }
 }

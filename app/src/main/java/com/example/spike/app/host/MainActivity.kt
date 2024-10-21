@@ -33,7 +33,6 @@ class MainActivity : ComponentActivity() {
                     val role = sharedPreferences.getString("user_role", null)
 
                     GeneralNavHost(navController = navController)
-
                     if (token != null) {
                         when (role) {
                             "PET_OWNER" -> {

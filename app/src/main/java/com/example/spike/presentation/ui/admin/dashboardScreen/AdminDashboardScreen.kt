@@ -1,7 +1,9 @@
 package com.example.spike.presentation.ui.dashboardScreen
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,10 +21,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.spike.R
+import com.example.spike.presentation.navigation.Destination
+import com.example.spike.utils.handleLogout
 
 @Composable
-fun AdminDashboardScreen() {
+fun AdminDashboardScreen(navController: NavHostController) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -110,7 +119,10 @@ fun AdminDashboardScreen() {
                 .padding(20.dp)
                 .shadow(
                     elevation = 100.dp, // Define la altura de la sombra
-                    shape = RoundedCornerShape(topStart = 45.dp, topEnd = 45.dp), // Redondear la parte superior
+                    shape = RoundedCornerShape(
+                        topStart = 45.dp,
+                        topEnd = 45.dp
+                    ), // Redondear la parte superior
                     clip = false // No recorta la sombra
                 )
         ) {
@@ -123,18 +135,30 @@ fun AdminDashboardScreen() {
                 )
 
                 {
-                    DashboardIcon(R.drawable.ic_clients, "Usuarios")
-                    DashboardIcon(R.drawable.ic_staff, "Personal")
-                    DashboardIcon(R.drawable.ic_consultations, "Consultas")
+                    DashboardIcon(R.drawable.ic_clients, "Usuarios") {
+                        navController.navigate(Destination.AdminDestination.AdminUsers.route)
+                    }
+                    DashboardIcon(R.drawable.ic_staff, "Personal") {
+                        navController.navigate(Destination.AdminDestination.AdminUsers.route)
+                    }
+                    DashboardIcon(R.drawable.ic_consultations, "Consultas") {
+                        navController.navigate(Destination.AdminDestination.AdminConsults.route)
+                    }
                 }
                 Spacer(modifier = Modifier.height(15.dp))
                 Row(
                     horizontalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    DashboardIcon(R.drawable.ic_collaborators, "Colaboradores")
-                    DashboardIcon(R.drawable.ic_services, "Servicios")
-                    DashboardIcon(R.drawable.ic_reports, "Reportes")
+                    DashboardIcon(R.drawable.ic_collaborators, "Colaboradores") {
+                        navController.navigate(Destination.AdminDestination.AdminClients.route)
+                    }
+                    DashboardIcon(R.drawable.ic_services, "Servicios") {
+                        navController.navigate(Destination.AdminDestination.AdminUsers.route)
+                    }
+                    DashboardIcon(R.drawable.ic_reports, "Logout") {
+                        handleLogout(navController, context)
+                    }
                 }
                 Spacer(modifier = Modifier.height(30.dp))
 
@@ -154,10 +178,12 @@ fun AdminDashboardScreen() {
 }
 
 @Composable
-fun DashboardIcon(iconResId: Int, label: String) {
+fun DashboardIcon(iconResId: Int, label: String, onClick: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(9.dp)
+        modifier = Modifier
+            .padding(9.dp)
+            .clickable { onClick() }
     ) {
         Box(
             modifier = Modifier
@@ -187,5 +213,6 @@ fun DashboardIcon(iconResId: Int, label: String) {
 @Preview(showBackground = true)
 @Composable
 fun DashboardScreenPreview() {
-    AdminDashboardScreen()
+    val navController = rememberNavController()
+    AdminDashboardScreen(navController)
 }

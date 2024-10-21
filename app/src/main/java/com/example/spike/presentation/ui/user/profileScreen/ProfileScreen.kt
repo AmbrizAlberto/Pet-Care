@@ -43,6 +43,7 @@ import com.example.spike.presentation.ui.user.mainScreen.components.BaseLayoutSc
 import com.example.spike.presentation.ui.theme.colorLight
 import com.example.spike.presentation.ui.theme.darkCementPalette
 import com.example.spike.presentation.ui.theme.white700
+import com.example.spike.utils.handleLogout
 
 @Composable
 fun ProfileScreen(
@@ -99,17 +100,6 @@ fun ProfileHeader() {
     }
 }
 
-fun handleLogout(navController: NavHostController, context: Context) {
-    val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    with(sharedPreferences.edit()) {
-        remove("user_token")
-        apply()
-    }
-
-    navController.navigate(Destination.Login.route) {
-        popUpTo(Destination.Login.route) { inclusive }
-    }
-}
 
 @Composable
 fun ProfileOptions(navController: NavHostController) {

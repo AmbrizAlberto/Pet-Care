@@ -263,6 +263,12 @@ fun LoginScreen(
                             }
                         }
 
+                        "ADMIN" -> {
+                            navController.navigate(Destination.AdminDestination.AdminDashboard.route) {
+                                popUpTo(Destination.Login.route) { inclusive = true }
+                            }
+                        }
+
                         else -> {
                             Log.d("LoginDebug", "Unrecognized role: ${loginState.user.role}")
                             loginViewModel.errorMessage.value =

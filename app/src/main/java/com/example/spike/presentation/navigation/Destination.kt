@@ -20,7 +20,6 @@ sealed class Destination(
     }
 
     sealed class AdminDestination(route: String) : Destination(route) {
-        //        EJEMPLOS
         data object AdminDashboard : Destination("admin_dashboard")
         data object AdminUsers : Destination("admin_users")
         data object AdminConsults : Destination("admin_consults")
