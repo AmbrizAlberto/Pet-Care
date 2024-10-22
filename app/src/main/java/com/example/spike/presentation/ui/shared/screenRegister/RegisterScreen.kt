@@ -33,6 +33,7 @@ import com.example.spike.R
 import androidx.compose.runtime.*
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.spike.presentation.navigation.Destination
 import kotlinx.coroutines.delay
 
 
@@ -149,10 +150,9 @@ fun RegisterScreen(navController: NavController) {
     // Navegación con retraso
     if (navigateToNextScreen) {
         LaunchedEffect(Unit) {
-            delay(10000) // Retraso de 1 segundo
             when (selectedButton) {
-                "User" -> navController.navigate("user_register")
-                "Veterinary" -> navController.navigate("vet_register")
+                "User" -> navController.navigate(Destination.UserRegister.route)
+                "Veterinary" -> navController.navigate(Destination.VetRegister.route)
             }
         }
     }
