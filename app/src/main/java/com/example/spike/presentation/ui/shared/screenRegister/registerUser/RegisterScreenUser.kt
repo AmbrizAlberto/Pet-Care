@@ -24,7 +24,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
@@ -33,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.spike.presentation.ui.user.mainScreen.VerticalSpacer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +43,8 @@ fun RegisterScreenUser(navController: NavController) {
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf(false) }
     var phone by remember { mutableStateOf("") }
     var selectedCity by remember { mutableStateOf("Select City") }
     var expanded by remember { mutableStateOf(false) }
@@ -47,6 +52,8 @@ fun RegisterScreenUser(navController: NavController) {
     var showPrivacyPolicy by remember { mutableStateOf(false) }
 
     val cities = listOf("New York", "Los Angeles", "Chicago", "Houston", "Miami")
+    val passwordRegex = "^(?=.*[A-Z])(?=.*[!@#\$%^&*(),.?\":{}|<>])(?=.*[0-9]).{8,}$".toRegex()
+
 
     Box(
         modifier = Modifier
@@ -121,6 +128,41 @@ fun RegisterScreenUser(navController: NavController) {
                 )
             )
             Spacer(modifier = Modifier.height(16.dp))
+
+            TextField(
+                value = password,
+                onValueChange = {
+                    password = it
+                    passwordError = !passwordRegex.matches(it)
+                },
+                label = { Text("Password") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                isError = passwordError,
+                shape = RoundedCornerShape(8.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.White,
+                    focusedIndicatorColor = Color(0xFF2274A5),
+                    unfocusedIndicatorColor = Color.Gray
+                )
+            )
+
+            // Mensaje de error si la contraseña no cumple con los requisitos
+            if (passwordError) {
+                Text(
+                    text = "Password must contain at least 1 uppercase letter, 1 symbol, and 1 number",
+                    color = Color.Red,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+
+            VerticalSpacer(16)
 
             // TextField para número telefónico
             TextField(

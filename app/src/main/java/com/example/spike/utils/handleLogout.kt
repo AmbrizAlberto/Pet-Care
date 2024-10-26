@@ -12,6 +12,6 @@ fun handleLogout(navController: NavHostController, context: Context) {
     }
 
     navController.navigate(Destination.Login.route) {
-        popUpTo(Destination.Login.route) { inclusive }
+        popUpTo(Destination.Login.route) { inclusive = true }
     }
 }

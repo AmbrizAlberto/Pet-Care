@@ -156,7 +156,7 @@ fun AdminDashboardScreen(navController: NavHostController) {
                     DashboardIcon(R.drawable.ic_services, "Servicios") {
                         navController.navigate(Destination.AdminDestination.AdminUsers.route)
                     }
-                    DashboardIcon(R.drawable.ic_reports, "Logout") {
+                    DashboardIcon(R.drawable.ic_logout, "Logout") {
                         handleLogout(navController, context)
                     }
                 }

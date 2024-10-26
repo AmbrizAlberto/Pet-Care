@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -158,7 +159,7 @@ fun TopBarSection() {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_menu),
@@ -166,16 +167,27 @@ fun TopBarSection() {
             tint = white700,
             modifier = Modifier.size(24.dp)
         )
-        Box(
-            modifier = Modifier
-                .width(48.dp)
-                .height(48.dp)
+
+        Box (
+            modifier = Modifier.size(40.dp)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_user),
-                contentDescription = "Profile",
-                modifier = Modifier.fillMaxSize(),
-                tint = white700
+            Image(
+                painter = painterResource(R.drawable.svg_logo),
+                contentDescription = "Logo",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        Box(
+            modifier = Modifier.size(33.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_pet),
+                contentDescription = "Pet",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
             )
         }
 
@@ -212,7 +224,7 @@ fun SearchSection(searchText: MutableState<String>) {
                 unfocusedContainerColor = Color.Transparent,
                 unfocusedLeadingIconColor = Color.Gray,
 
-            )
+                )
 
         )
     }
@@ -251,8 +263,7 @@ fun CategoryChip(category: String, displayText: String, isSelected: Boolean, onC
             .clip(RoundedCornerShape(20.dp))
             .background(backgroundColor)
             .clickable { onClick() }
-            .padding(vertical = 8.dp, horizontal = 20.dp)
-        ,
+            .padding(vertical = 8.dp, horizontal = 20.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
