@@ -56,44 +56,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.spike.R
 import com.example.spike.presentation.common.components.PrimaryButton
 import com.example.spike.presentation.navigation.Destination
+import com.example.spike.presentation.ui.theme.grayBackground
+import com.example.spike.presentation.ui.user.mainScreen.VerticalSpacer
 import com.example.spike.utils.rememberImeState
-
-
-@Composable
-fun FiveSidedShape() {
-    Canvas(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-    ) {
-        val path = Path().apply {
-            // Definir el polígono con bordes redondeados
-            moveTo(size.width / 2, size.height * 0.25f) // Bajar la punta superior
-            lineTo(0f, size.height * 0.5f) // Punto izquierdo superior
-            lineTo(0f, size.height) // Punto inferior izquierdo
-            lineTo(size.width, size.height) // Punto inferior derecho
-            lineTo(size.width, size.height * 0.5f) // Punto derecho superior
-
-            // Redondear la punta superior
-            lineTo(
-                size.width / 2 + 25.dp.toPx(),
-                size.height * 0.25f + 25.dp.toPx()
-            ) // Ajustar para la esquina redondeada
-            lineTo(
-                size.width / 2 - 25.dp.toPx(),
-                size.height * 0.25f + 25.dp.toPx()
-            ) // Ajustar para la esquina redondeada
-
-            close() // Cerrar la figura
-        }
-
-        // Dibujar el polígono
-        drawPath(
-            path = path,
-            color = Color(0xFF4C526A)
-        )
-    }
-}
 
 @Composable
 fun LoginScreen(
@@ -122,24 +87,28 @@ fun LoginScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF3E4357))
+            .background(grayBackground)
     ) {
 //        FiveSidedShape()
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState),
+                .verticalScroll(scrollState)
+                .padding(bottom = 40.dp)
+            ,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
             // Logo y texto "Spike"
             Row(
-                modifier = Modifier.padding(top = 50.dp).width(250.dp),
+                modifier = Modifier
+                    .padding(top = 50.dp)
+                    .width(250.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly,
 
-            ) {
+                ) {
                 Image(
                     painter = painterResource(id = R.drawable.logo),
                     contentDescription = null,
@@ -240,20 +209,20 @@ fun LoginScreen(
             }
 
             // Botón "Login"
-            Row (
+            Row(
                 modifier = Modifier.padding(horizontal = 26.dp)
             ) {
 
-            PrimaryButton(
-                text = "Login",
-                onClickMethod = {
-                    if (username.isNotEmpty() && password.isNotEmpty()) {
-                        loginViewModel.login(username, password, context)
-                    } else {
-                        loginViewModel.errorMessage.value = "Please fill in all fields."
+                PrimaryButton(
+                    text = "Login",
+                    onClickMethod = {
+                        if (username.isNotEmpty() && password.isNotEmpty()) {
+                            loginViewModel.login(username, password, context)
+                        } else {
+                            loginViewModel.errorMessage.value = "Please fill in all fields."
+                        }
                     }
-                }
-            )
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -311,8 +280,7 @@ fun LoginScreen(
                 Divider(color = Color.LightGray, modifier = Modifier.weight(1f))
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
+            VerticalSpacer(30)
             // Botón "Register"
             Button(
                 onClick = { navController.navigate(Destination.Register.route) },
