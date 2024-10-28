@@ -1,24 +1,34 @@
 package com.example.spike.presentation.ui.shared.screenRegister.registerUser
 
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -30,24 +40,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+
+import com.example.spike.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreenUser(navController: NavController) {
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var selectedCity by remember { mutableStateOf("Select City") }
-    var expanded by remember { mutableStateOf(false) }
-
-    val cities = listOf("New York", "Los Angeles", "Chicago", "Houston", "Miami")
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
 
     Box(
         modifier = Modifier
@@ -58,155 +68,132 @@ fun RegisterScreenUser(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 50.dp),
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
+            // Flecha de retroceso
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.align(Alignment.Start)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.White
+                )
+            }
 
-            // TextField de FirstName
-            TextField(
-                value = firstName,
-                onValueChange = { firstName = it },
-                label = { Text("First Name") },
+            // Barra de progreso
+            LinearProgressIndicator(
+                progress = 0.5f,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                color = Color(0xFF2224A5)
+            )
+
+            // Título
+            Text(
+                text = "Enter your personal information",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White,
+                fontSize = 25.sp,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(vertical = 16.dp)
+            ) {
+                Spacer(modifier = Modifier.height(64.dp))
+
+                // Botón para subir imagen
+                Button(
+                    onClick = {
+                        // Acción para seleccionar imagen
+                    },
+                    modifier = Modifier
+                        .height(120.dp)
+                        .width(150.dp)
+                        .border(
+                            width = 2.dp,
+                            color = Color.LightGray,
+                            shape = RoundedCornerShape(80.dp)
+                        ),
+                    contentPadding = PaddingValues(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent
+                    )
+                ) {
+                    // Imagen dentro del botón
+                    Image(
+                        painter = painterResource(id = R.drawable.img),
+                        contentDescription = "Upload Image",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .weight(1f),
+                        contentScale = ContentScale.Fit
+                    )
+                }
+
+                Text(
+                    text = "Upload Image",
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Fila para First Name y Last Name
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 26.dp),
-                shape = MaterialTheme.shapes.medium
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // TextField de First Name
+                TextField(
+                    value = firstName,
+                    onValueChange = { firstName = it },
+                    label = { Text("First Name") },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp),
+                    shape = MaterialTheme.shapes.medium
+                )
 
-            // TextField de LastName
-            TextField(
-                value = lastName,
-                onValueChange = { lastName = it },
-                label = { Text("Last Name") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 26.dp),
-                shape = MaterialTheme.shapes.medium
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+                // TextField de Last Name
+                TextField(
+                    value = lastName,
+                    onValueChange = { lastName = it },
+                    label = { Text("Last Name") },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 8.dp),
+                    shape = MaterialTheme.shapes.medium
+                )
+            }
 
-            // TextField de Email
-            TextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Email@email.com") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 26.dp),
-                shape = MaterialTheme.shapes.medium
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(248.dp))
 
-            // TextField para número telefónico
-            TextField(
-                value = phone,
-                onValueChange = { newValue ->
-                    if (newValue.length <= 10 && newValue.all { it.isDigit() }) {
-                        phone = newValue
-                    }
+            // Botón "Next"
+            Button(
+                onClick = {
+                    navController.navigate("register_user_details")
                 },
-                label = { Text("Phone Number") },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 26.dp),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Phone
-                ),
-                visualTransformation = VisualTransformation.None,
-                shape = MaterialTheme.shapes.medium
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Menú desplegable para la ciudad
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 26.dp)
-                    .clickable { expanded = true }
-                    .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp))
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .align(Alignment.End)
+                    .padding(16.dp)
+                    .height(48.dp)
+                    .width(100.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF2224A5)
+                )
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = selectedCity,
-                        color = Color.Black,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "Dropdown icon",
-                        tint = Color.Gray
-                    )
-                }
-            }
-
-            // Menú desplegable que aparece debajo del campo seleccionado
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 26.dp)
-            ) {
-                cities.forEach { city ->
-                    DropdownMenuItem(
-                        text = { Text(text = city) },
-                        onClick = {
-                            selectedCity = city // Actualiza la ciudad seleccionada
-                            expanded = false // Cierra el menú
-                        }
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 26.dp)
-                    .clickable { expanded = true }
-                    .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp))
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = selectedCity,
-                        color = Color.Black,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "Dropdown icon",
-                        tint = Color.Gray
-                    )
-                }
-            }
-
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 26.dp)
-            ) {
-                cities.forEach { city ->
-                    DropdownMenuItem(
-                        text = { Text(text = city) },
-                        onClick = {
-                            selectedCity = city
-                            expanded = false
-                        }
-                    )
-                }
+                Text(text = "Next")
             }
         }
     }
@@ -214,7 +201,8 @@ fun RegisterScreenUser(navController: NavController) {
 
 @Preview
 @Composable
-fun RegisterScreen2Preview(){
+fun RegisterScreenUserPreview() {
     val navController = rememberNavController()
     RegisterScreenUser(navController = navController)
 }
+

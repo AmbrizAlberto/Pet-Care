@@ -1,31 +1,26 @@
-package com.example.spike.presentation.ui.shared.screenRegister.registerVet
+package com.example.spike.presentation.ui.shared.screenRegister.registerUser.registerPet
 
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
-import android.provider.MediaStore
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -39,41 +34,39 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.spike.R
-import com.example.spike.presentation.navigation.Destination
-import com.example.spike.presentation.ui.shared.screenRegister.RegisterViewModel
+import coil.compose.rememberAsyncImagePainter
 
+import com.example.spike.R
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreenVet(navController: NavController) {
-    var nameVet by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
+fun RegisterPetScreen(navController: NavController) {
+    var petName by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF243748)),
-        contentAlignment = Alignment.Center
+            .background(Color(0xFF243748))
+            .verticalScroll(rememberScrollState())
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+            verticalArrangement = Arrangement.Top // Cambiado para que los elementos se alineen en la parte superior
         ) {
             // Flecha de retroceso
             IconButton(
@@ -98,38 +91,47 @@ fun RegisterScreenVet(navController: NavController) {
 
             // Título
             Text(
-                text = "Enter your personal information",
+                text = "Register Your Pet",
+                fontSize = 25.sp,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White,
-                fontSize = 25.sp,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
 
+            Spacer(modifier = Modifier.height(64.dp))
+
             // Botón para subir imagen
-            Button(
-                onClick = {
-                    // Acción para seleccionar imagen
-                },
+            Box(
                 modifier = Modifier
-                    .height(120.dp)
-                    .width(150.dp)
+                    .size(150.dp)
+                    .clip(RoundedCornerShape(80.dp))
                     .border(
                         width = 2.dp,
                         color = Color.LightGray,
                         shape = RoundedCornerShape(80.dp)
-                    ),
-                contentPadding = PaddingValues(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent
-                )
+                    )
+                    .clickable {
+                        // Acción para seleccionar imagen
+                    },
+                contentAlignment = Alignment.Center
             ) {
-                // Imagen dentro del botón
-                Image(
-                    painter = painterResource(id = R.drawable.img),
-                    contentDescription = "Upload Image",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Fit
-                )
+                if (imageUri != null) {
+                    Image(
+                        painter = rememberAsyncImagePainter(model = imageUri),
+                        contentDescription = "Pet Image",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(80.dp)),
+                        contentScale = ContentScale.Fit
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(id = R.drawable.upload_image),
+                        contentDescription = "Upload Icon",
+                        modifier = Modifier.size(60.dp),
+                        tint = Color.White
+                    )
+                }
             }
 
             Text(
@@ -141,42 +143,35 @@ fun RegisterScreenVet(navController: NavController) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Fila para Company Name y Email
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 26.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp) // Espaciado vertical
-            ) {
-                // TextField de nombre de la empresa
-                TextField(
-                    value = nameVet,
-                    onValueChange = { nameVet = it },
-                    label = { Text("Company name") },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium
-                )
+            Text(
+                text = "What is the name of your pet?",
+                fontSize = 20.sp,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
 
-                // TextField de email
-                TextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = { Text("Email") },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium
-                )
+            // Campo de texto para el nombre de la mascota
+            TextField(
+                value = petName,
+                onValueChange = { petName = it },
+                label = { Text("Pet Name") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 26.dp),
+            )
 
-            }
-
-
-            Spacer(modifier = Modifier.weight(1f)) // Espaciador flexible para ocupar el espacio restante
+            // Espaciado para separar los campos del botón
+            Spacer(modifier = Modifier.height(220.dp))
 
             // Botón "Next"
             Button(
                 onClick = {
-                    navController.navigate("register_vet_address")
+                    navController.navigate("register_pet_details")
                 },
                 modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(16.dp)
+                    .align(Alignment.End) // Mantiene el botón a la derecha
+                    .padding(vertical = 16.dp)
                     .height(48.dp)
                     .width(100.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -190,9 +185,10 @@ fun RegisterScreenVet(navController: NavController) {
 }
 
 
-@Preview
+
+@Preview(showBackground = true)
 @Composable
-fun RegisterScreenVetPreview(){
+fun RegisterAnimalScreenPreview() {
     val navController = rememberNavController()
-    RegisterScreenVet(navController = navController)
+    RegisterPetScreen(navController = navController)
 }

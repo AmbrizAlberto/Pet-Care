@@ -21,7 +21,7 @@ class LoginViewModel : ViewModel() {
             isLoading.value = true
             try {
                 val response = withContext(Dispatchers.IO) {
-                    RetrofitInstance.api.login(LoginRequest(email, password))
+                    RetrofitInstance.loginService.login(LoginRequest(email, password))
                 }
                 if (response.token != null) {
                     val sharedPreferences =
