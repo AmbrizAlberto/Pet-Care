@@ -12,11 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 //Pantallas
-import com.example.spike.data.model.User
+import com.example.spike.data.network.model.User
 import com.example.spike.presentation.navigation.Destination
 import com.example.spike.presentation.navigation.GeneralNavHost
 import com.example.spike.presentation.ui.shared.screenLogin.LoginViewModel
 import com.example.spike.presentation.ui.theme.SpikeTheme
+import com.example.spike.utils.enums.SharedPreferences
 import kotlin.math.log
 
 
@@ -28,9 +29,9 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     // Configurar el NavController
                     val navController = rememberNavController()
-                    val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-                    val token = sharedPreferences.getString("user_token", null)
-                    val role = sharedPreferences.getString("user_role", null)
+                    val sharedPreferences = getSharedPreferences(SharedPreferences.USER_PREFS.value, Context.MODE_PRIVATE)
+                    val token = sharedPreferences.getString(SharedPreferences.TOKEN.value, null)
+                    val role = sharedPreferences.getString(SharedPreferences.ROLE.value, null)
 
                     GeneralNavHost(navController = navController)
                     if (token != null) {

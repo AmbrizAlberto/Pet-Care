@@ -1,4 +1,4 @@
-package com.example.spike.data.model
+package com.example.spike.data.network.model
 
 data class Appointment (
     val vetName: String,

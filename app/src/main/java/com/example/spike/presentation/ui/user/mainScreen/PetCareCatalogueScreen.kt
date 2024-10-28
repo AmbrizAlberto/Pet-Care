@@ -1,5 +1,6 @@
 package com.example.spike.presentation.ui.user.mainScreen
 
+import UserScreenViewModel
 import android.graphics.Paint.Align
 import android.icu.text.ListFormatter.Width
 import androidx.compose.foundation.Image
@@ -24,6 +25,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -32,7 +34,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,14 +47,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.spike.R
-import com.example.spike.data.model.VetItemData
+import com.example.spike.data.network.model.Veterinary
 import com.example.spike.presentation.ui.categories
 import com.example.spike.presentation.ui.theme.bluePalette
 import com.example.spike.presentation.ui.user.mainScreen.components.BaseLayoutScreen
@@ -59,76 +67,29 @@ import com.example.spike.presentation.ui.theme.graphitePalette
 import com.example.spike.presentation.ui.theme.grayBackground
 import com.example.spike.presentation.ui.theme.grayContent
 import com.example.spike.presentation.ui.theme.white700
+import com.example.spike.utils.getTokenFromSharedPreferences
+import com.example.spike.utils.previews.veterinaryItems
 
-// Simulando listas de elementos para cada categoría
-val categoryItems = listOf(
-    VetItemData(
-        name = "Pawfect Care",
-        address = "123 Elm Street, Cityville",
-        description = "Veterinaria general con atención de lunes a sábado.",
-        imageRes = R.drawable.vet_example,
-        category = "medical"
-    ),
-    VetItemData(
-        name = "Pawfect Care",
-        address = "123 Elm Street, Cityville",
-        description = "Veterinaria general con atención de lunes a sábado.",
-        imageRes = R.drawable.vet_example,
-        category = "medical"
-    ),
-    VetItemData(
-        name = "Pawfect Care",
-        address = "123 Elm Street, Cityville",
-        description = "Veterinaria general con atención de lunes a sábado.",
-        imageRes = R.drawable.vet_example,
-        category = "medical"
-    ),
-    VetItemData(
-        name = "Happy Paws Clinic",
-        address = "45 Oak Avenue, Cityville",
-        description = "Clínica especializada en mascotas pequeñas.",
-        imageRes = R.drawable.vet_example,
-        category = "nutrition"
-    ),
-    VetItemData(
-        name = "Healthy Tails",
-        address = "67 Maple Boulevard, Townsville",
-        description = "Ofrecemos cuidados preventivos y vacunas.",
-        imageRes = R.drawable.vet_example,
-        category = "nutrition"
-    ),
-    VetItemData(
-        name = "Pet Experts",
-        address = "89 Pine Road, Cityville",
-        description = "Especialistas en cirugía y traumatología animal.",
-        imageRes = R.drawable.vet_example,
-        category = "recreation"
-    ),
-    VetItemData(
-        name = "24/7 Vet Care",
-        address = "456 Birch Lane, Cityville",
-        description = "Atención de emergencias las 24 horas.",
-        imageRes = R.drawable.vet_example,
-        category = "medical"
-    )
-)
-
-fun filterByCategory(category: String, items: List<VetItemData>): List<VetItemData> {
-    return items.filter { it.category == category }
+fun filterByCategory(category: String, items: List<Veterinary>): List<Veterinary> {
+    return items.filter { it.category.contains(category) }
 }
 
 @Composable
 fun PetCareCatalogueScreen(
-//    onItemClick: (String) -> Unit,
     selectedItemIndexMenu: MutableState<Int>,
     navController: NavHostController,
+    userScreenViewModel: UserScreenViewModel = viewModel()
 ) {
-    val selectedCategory = remember { mutableStateOf("nutrition") }
-    val selectedIndex = remember {
-        mutableIntStateOf(0)
-    }
-    val searchText = remember {
-        mutableStateOf("")
+    val selectedCategory = remember { mutableStateOf("NUTRITION") }
+    val searchText = remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val token = getTokenFromSharedPreferences(context)
+    val veterinaries by userScreenViewModel.veterinaries.collectAsState()
+    val errorMessage by userScreenViewModel.errorMessage.collectAsState()
+    val isLoading by userScreenViewModel.isLoading.collectAsState()
+
+    LaunchedEffect(Unit) {
+        token?.let { userScreenViewModel.fetchVeterinaries(it) }
     }
 
     BaseLayoutScreen(
@@ -149,17 +110,32 @@ fun PetCareCatalogueScreen(
             VerticalSpacer(height = 10)
             CategoryFilterSection(selectedCategory)
             VerticalSpacer(height = 20)
-            CategoryItemList(items = filterByCategory(selectedCategory.value, categoryItems))
+
+            if (isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else if (errorMessage.isNotEmpty()) {
+                Text(text = errorMessage, color = Color.Red)
+            } else {
+                CategoryItemList(filterByCategory(selectedCategory.value, veterinaries))
+            }
         }
     }
 }
+
 
 @Composable
 fun TopBarSection() {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 14.dp)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_menu),
@@ -168,7 +144,7 @@ fun TopBarSection() {
             modifier = Modifier.size(24.dp)
         )
 
-        Box (
+        Box(
             modifier = Modifier.size(40.dp)
         ) {
             Image(
@@ -233,9 +209,9 @@ fun SearchSection(searchText: MutableState<String>) {
 @Composable
 fun CategoryFilterSection(selectedCategory: MutableState<String>) {
     val categories = mapOf(
-        "nutrition" to "Nutrición",
-        "medical" to "Atención",
-        "recreation" to "Recreación"
+        "NUTRITION" to "Nutrition",
+        "CARE" to "Care",
+        "RECREATION" to "Recreation"
     )
 
     LazyRow(
@@ -275,59 +251,57 @@ fun CategoryChip(category: String, displayText: String, isSelected: Boolean, onC
 }
 
 @Composable
-fun CategoryItemList(items: List<VetItemData>) {
+fun CategoryItemList(items: List<Veterinary>) {
 
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(
-                start = 16.dp,
-                end = 16.dp,
-                top = 5.dp,
-                bottom = 85.dp
-            )
+            .padding(horizontal = 16.dp, vertical = 5.dp)
     ) {
         items(items) { item ->
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp) // Espaciado entre elementos
+                    .padding(vertical = 8.dp)
                     .clip(RoundedCornerShape(15.dp))
                     .background(darkCementPalette)
-                    .padding(16.dp), //Espaciado interior
+                    .padding(16.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start
                 ) {
                     // Imagen de la veterinaria
-                    Image(
-                        painter = painterResource(id = item.imageRes),
-                        contentDescription = item.name,
+                    AsyncImage(
+                        model = item.img,
+                        contentDescription = item.veterinarieName,
                         modifier = Modifier
                             .size(80.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .background(Color.LightGray),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(R.drawable.ic_options)
                     )
-                    HorizontalSpacer(16)
+
+                    Spacer(modifier = Modifier.width(16.dp))
                     Column(
                         verticalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = item.name,
+                            text = item.veterinarieName,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
                         Text(
-                            text = item.address,
+                            text = "${item.street}, ${item.locality}, ${item.city}, ${item.cologne}, CP ${item.cp}",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
                         )
                         Text(
-                            text = item.description,
+                            text = item.email,
                             style = MaterialTheme.typography.bodyMedium,
                             color = white700,
                             modifier = Modifier.padding(top = 4.dp)
@@ -338,7 +312,6 @@ fun CategoryItemList(items: List<VetItemData>) {
         }
     }
 }
-
 
 @Composable
 fun VerticalSpacer(height: Int) {
@@ -376,10 +349,9 @@ fun PetCareCataloguePreview() {
             TopBarSection()
             SearchSection(searchText)
             VerticalSpacer(height = 20)
-//            SectionCategoryListHorizontal(selectedItemIndexMenu)
             CategoryFilterSection(selectedCategory)
             VerticalSpacer(height = 20)
-            CategoryItemList(items = filterByCategory(selectedCategory.value, categoryItems))
+            CategoryItemList(veterinaryItems)
         }
     }
 }

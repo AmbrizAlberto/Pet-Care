@@ -1,4 +1,4 @@
-package com.example.spike.app.data.network.model
+package com.example.spike.data.network.model.requests
 
 data class LoginRequest(
     val email: String,
