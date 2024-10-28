@@ -4,9 +4,10 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spike.app.data.network.model.LoginResponse
-import com.example.spike.app.data.network.model.LoginRequest
-import com.example.spike.app.data.network.RetrofitInstance
+import com.example.spike.data.network.model.responses.LoginResponse
+import com.example.spike.data.network.model.requests.LoginRequest
+import com.example.spike.data.network.RetrofitInstance
+import com.example.spike.utils.enums.SharedPreferences
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,9 +26,10 @@ class LoginViewModel : ViewModel() {
                 }
                 if (response.token != null) {
                     val sharedPreferences =
-                        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                        context.getSharedPreferences(SharedPreferences.USER_PREFS.value, Context.MODE_PRIVATE)
                     with(sharedPreferences.edit()) {
                         putString("user_token", response.token)
+                        putString("user_role", response.user.role)
                         apply()
                     }
                     loginState.value = response

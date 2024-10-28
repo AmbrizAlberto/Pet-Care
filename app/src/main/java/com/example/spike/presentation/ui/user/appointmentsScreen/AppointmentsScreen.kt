@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.spike.data.model.Appointment
+import com.example.spike.data.network.model.Appointment
 import com.example.spike.presentation.ui.theme.darkCementPalette
 import com.example.spike.presentation.ui.theme.grayContent
 

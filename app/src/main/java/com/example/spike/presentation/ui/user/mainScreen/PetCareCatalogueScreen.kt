@@ -1,10 +1,12 @@
 package com.example.spike.presentation.ui.user.mainScreen
 
+import UserScreenViewModel
 import android.graphics.Paint.Align
 import android.icu.text.ListFormatter.Width
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +23,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -30,44 +34,63 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.spike.R
+import com.example.spike.data.network.model.Veterinary
 import com.example.spike.presentation.ui.categories
+import com.example.spike.presentation.ui.theme.bluePalette
 import com.example.spike.presentation.ui.user.mainScreen.components.BaseLayoutScreen
 import com.example.spike.presentation.ui.theme.colorBlack
+import com.example.spike.presentation.ui.theme.darkCementPalette
+import com.example.spike.presentation.ui.theme.graphitePalette
 import com.example.spike.presentation.ui.theme.grayBackground
 import com.example.spike.presentation.ui.theme.grayContent
 import com.example.spike.presentation.ui.theme.white700
+import com.example.spike.utils.getTokenFromSharedPreferences
+import com.example.spike.utils.previews.veterinaryItems
 
-// Simulando listas de elementos para cada categoría
-val categoryItems = listOf(
-    listOf("Item A1", "Item A2", "Item A3"),
-    listOf("Item B1", "Item B2", "Item B3"),
-    listOf("Item C1", "Item C2", "Item C3"),
-)
+fun filterByCategory(category: String, items: List<Veterinary>): List<Veterinary> {
+    return items.filter { it.category.contains(category) }
+}
 
 @Composable
 fun PetCareCatalogueScreen(
-//    onItemClick: (String) -> Unit,
     selectedItemIndexMenu: MutableState<Int>,
     navController: NavHostController,
+    userScreenViewModel: UserScreenViewModel = viewModel()
 ) {
-    val selectedIndex = remember {
-        mutableIntStateOf(0)
-    }
+    val selectedCategory = remember { mutableStateOf("NUTRITION") }
+    val searchText = remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val token = getTokenFromSharedPreferences(context)
+    val veterinaries by userScreenViewModel.veterinaries.collectAsState()
+    val errorMessage by userScreenViewModel.errorMessage.collectAsState()
+    val isLoading by userScreenViewModel.isLoading.collectAsState()
 
+    LaunchedEffect(Unit) {
+        token?.let { userScreenViewModel.fetchVeterinaries(it) }
+    }
 
     BaseLayoutScreen(
         navController = navController,
@@ -83,21 +106,36 @@ fun PetCareCatalogueScreen(
                 )
         ) {
             TopBarSection()
-            SearchSection()
+            SearchSection(searchText)
+            VerticalSpacer(height = 10)
+            CategoryFilterSection(selectedCategory)
             VerticalSpacer(height = 20)
-            SectionCategoryListHorizontal(selectedIndex = selectedIndex)
-            VerticalSpacer(height = 20)
-            CategoryItemList(items = categoryItems[selectedIndex.value])
+
+            if (isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else if (errorMessage.isNotEmpty()) {
+                Text(text = errorMessage, color = Color.Red)
+            } else {
+                CategoryItemList(filterByCategory(selectedCategory.value, veterinaries))
+            }
         }
     }
 }
+
 
 @Composable
 fun TopBarSection() {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 14.dp)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_menu),
@@ -105,16 +143,27 @@ fun TopBarSection() {
             tint = white700,
             modifier = Modifier.size(24.dp)
         )
+
         Box(
-            modifier = Modifier
-                .width(48.dp)
-                .height(48.dp)
+            modifier = Modifier.size(40.dp)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_user),
-                contentDescription = "Profile",
-                modifier = Modifier.fillMaxSize(),
-                tint = white700
+            Image(
+                painter = painterResource(R.drawable.svg_logo),
+                contentDescription = "Logo",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        Box(
+            modifier = Modifier.size(33.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_pet),
+                contentDescription = "Pet",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
             )
         }
 
@@ -122,16 +171,15 @@ fun TopBarSection() {
 }
 
 @Composable
-fun SearchSection() {
+fun SearchSection(searchText: MutableState<String>) {
     Column(modifier = Modifier.padding(top = 20.dp)) {
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = searchText.value,
+            onValueChange = { searchText.value = it },
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_search),
                     contentDescription = "Search",
-                    tint = colorBlack,
                 )
             },
             modifier = Modifier
@@ -145,91 +193,124 @@ fun SearchSection() {
                     style = MaterialTheme.typography.labelMedium
                 )
             },
-//            colors = TextFieldColors(
-//                focusedContainerColor = Color.Transparent,
-//                disabledIndicatorColor = Color.Transparent,
-//                unfocusedIndicatorColor = Color.Transparent,
-//                ...
-//            )
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Gray,
+                focusedLeadingIconColor = Color.Black,
+                focusedIndicatorColor = Color.Black,
+                unfocusedContainerColor = Color.Transparent,
+                unfocusedLeadingIconColor = Color.Gray,
+
+                )
 
         )
     }
 }
 
 @Composable
-fun CategoryTitle(category: Any, isSelected: Boolean, modifier: Modifier) {
-    Box(
-        modifier = modifier
-    ) {
-        Text(
-            text = category.toString(),
-            style = if (isSelected) {
-                MaterialTheme.typography.titleMedium
-            } else {
-                MaterialTheme.typography.bodyLarge
-            },
-            color = white700
-        )
-    }
+fun CategoryFilterSection(selectedCategory: MutableState<String>) {
+    val categories = mapOf(
+        "NUTRITION" to "Nutrition",
+        "CARE" to "Care",
+        "RECREATION" to "Recreation"
+    )
 
-}
-
-@Composable
-fun SectionCategoryListHorizontal(selectedIndex: MutableState<Int>) {
     LazyRow(
         horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
-        itemsIndexed(categories) { index, item ->
-            val isSelected = index == selectedIndex.value
-            CategoryTitle(
-                category = item,
-                isSelected = isSelected,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .selectable(
-                        selected = isSelected,
-                        enabled = true,
-                        onClick = { selectedIndex.value = index }
-                    )
+        items(categories.keys.toList()) { category ->
+            CategoryChip(
+                category = category,
+                displayText = categories[category] ?: category,
+                isSelected = selectedCategory.value == category,
+                onClick = { selectedCategory.value = category }
             )
         }
     }
 }
 
 @Composable
-fun CategoryItemList(items: List<String>) {
+fun CategoryChip(category: String, displayText: String, isSelected: Boolean, onClick: () -> Unit) {
+    val backgroundColor = if (isSelected) bluePalette else darkCementPalette
+    val textColor = if (isSelected) Color.White else white700
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(backgroundColor)
+            .clickable { onClick() }
+            .padding(vertical = 8.dp, horizontal = 20.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = displayText,
+            color = textColor,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
+        )
+    }
+}
+
+@Composable
+fun CategoryItemList(items: List<Veterinary>) {
+
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp, vertical = 5.dp)
     ) {
         items(items) { item ->
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp) // Espaciado entre elementos
+                    .padding(vertical = 8.dp)
                     .clip(RoundedCornerShape(15.dp))
-                    .background(grayContent)
-                    .padding(20.dp), //Espaciado interior
+                    .background(darkCementPalette)
+                    .padding(16.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.Start
                 ) {
-                    Text(text = "imagen")
-                    HorizontalSpacer(width = 10)
-                    Text(
-                        text = item,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = white700,
+                    // Imagen de la veterinaria
+                    AsyncImage(
+                        model = item.img,
+                        contentDescription = item.veterinarieName,
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color.LightGray),
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(R.drawable.ic_options)
                     )
+
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Column(
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = item.veterinarieName,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                        Text(
+                            text = "${item.street}, ${item.locality}, ${item.city}, ${item.cologne}, CP ${item.cp}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                        )
+                        Text(
+                            text = item.email,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = white700,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 }
             }
         }
     }
-
 }
 
 @Composable
@@ -247,6 +328,10 @@ fun HorizontalSpacer(width: Int) {
 fun PetCareCataloguePreview() {
     val selectedItemIndexMenu: MutableState<Int> = remember { mutableStateOf(0) }
     val navController = rememberNavController()
+    val selectedCategory = remember { mutableStateOf("Atención") }
+    val searchText = remember {
+        mutableStateOf("")
+    }
 
     BaseLayoutScreen(
         navController = navController,
@@ -262,11 +347,11 @@ fun PetCareCataloguePreview() {
                 )
         ) {
             TopBarSection()
-            SearchSection()
+            SearchSection(searchText)
             VerticalSpacer(height = 20)
-            SectionCategoryListHorizontal(selectedItemIndexMenu)
+            CategoryFilterSection(selectedCategory)
             VerticalSpacer(height = 20)
-            CategoryItemList(items = categoryItems[selectedItemIndexMenu.value])
+            CategoryItemList(veterinaryItems)
         }
     }
 }

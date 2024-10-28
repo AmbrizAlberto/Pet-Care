@@ -1,6 +1,7 @@
 package com.example.spike.presentation.ui.shared.screenLogin
 
 import android.util.Log
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,7 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -51,44 +55,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.spike.R
+import com.example.spike.presentation.common.components.PrimaryButton
 import com.example.spike.presentation.navigation.Destination
-
-
-@Composable
-fun FiveSidedShape() {
-    Canvas(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-    ) {
-        val path = Path().apply {
-            // Definir el polígono con bordes redondeados
-            moveTo(size.width / 2, size.height * 0.25f) // Bajar la punta superior
-            lineTo(0f, size.height * 0.5f) // Punto izquierdo superior
-            lineTo(0f, size.height) // Punto inferior izquierdo
-            lineTo(size.width, size.height) // Punto inferior derecho
-            lineTo(size.width, size.height * 0.5f) // Punto derecho superior
-
-            // Redondear la punta superior
-            lineTo(
-                size.width / 2 + 25.dp.toPx(),
-                size.height * 0.25f + 25.dp.toPx()
-            ) // Ajustar para la esquina redondeada
-            lineTo(
-                size.width / 2 - 25.dp.toPx(),
-                size.height * 0.25f + 25.dp.toPx()
-            ) // Ajustar para la esquina redondeada
-
-            close() // Cerrar la figura
-        }
-
-        // Dibujar el polígono
-        drawPath(
-            path = path,
-            color = Color(0xFF4C526A)
-        )
-    }
-}
+import com.example.spike.presentation.ui.theme.grayBackground
+import com.example.spike.presentation.ui.user.mainScreen.VerticalSpacer
+import com.example.spike.utils.rememberImeState
 
 @Composable
 fun LoginScreen(
@@ -105,31 +76,45 @@ fun LoginScreen(
     val errorMessage = loginViewModel.errorMessage.value
 
     val context = LocalContext.current
+    val imeState = rememberImeState()
+    val scrollState = rememberScrollState()
+
+    LaunchedEffect(key1 = imeState.value) {
+        if (imeState.value) {
+            scrollState.animateScrollTo(scrollState.maxValue, tween(300))
+        }
+    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF3E4357))
+            .background(grayBackground)
     ) {
-        FiveSidedShape()
+//        FiveSidedShape()
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 50.dp),
+                .verticalScroll(scrollState)
+                .padding(bottom = 40.dp)
+            ,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
             // Logo y texto "Spike"
             Row(
+                modifier = Modifier
+                    .padding(top = 50.dp)
+                    .width(250.dp),
                 verticalAlignment = Alignment.CenterVertically,
-            ) {
+                horizontalArrangement = Arrangement.SpaceEvenly,
+
+                ) {
                 Image(
                     painter = painterResource(id = R.drawable.logo),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(80.dp)
-                        .padding(end = 8.dp),
+                        .size(80.dp),
                     contentScale = ContentScale.Crop
                 )
                 Text(
@@ -225,22 +210,20 @@ fun LoginScreen(
             }
 
             // Botón "Login"
-            Button(
-                onClick = {
-                    if (username.isNotEmpty() && password.isNotEmpty()) {
-                        loginViewModel.login(username, password, context)
-                    } else {
-                        loginViewModel.errorMessage.value = "Please fill in all fields."
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2274A5)),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 26.dp)
-                    .height(50.dp),
-                shape = MaterialTheme.shapes.medium
+            Row(
+                modifier = Modifier.padding(horizontal = 26.dp)
             ) {
-                Text("Login", fontSize = 18.sp, color = Color.White)
+
+                PrimaryButton(
+                    text = "Login",
+                    onClickMethod = {
+                        if (username.isNotEmpty() && password.isNotEmpty()) {
+                            loginViewModel.login(username, password, context)
+                        } else {
+                            loginViewModel.errorMessage.value = "Please fill in all fields."
+                        }
+                    }
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -260,6 +243,12 @@ fun LoginScreen(
                         "VETERINARY_OWNER" -> {
                             selectedItemIndexMenu.value = 0
                             navController.navigate(Destination.VetDestination.PrincipalVetScreen.route) {
+                                popUpTo(Destination.Login.route) { inclusive = true }
+                            }
+                        }
+
+                        "ADMIN" -> {
+                            navController.navigate(Destination.AdminDestination.AdminDashboard.route) {
                                 popUpTo(Destination.Login.route) { inclusive = true }
                             }
                         }
@@ -292,8 +281,7 @@ fun LoginScreen(
                 Divider(color = Color.LightGray, modifier = Modifier.weight(1f))
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
+            VerticalSpacer(30)
             // Botón "Register"
             Button(
                 onClick = { navController.navigate(Destination.Register.route) },
