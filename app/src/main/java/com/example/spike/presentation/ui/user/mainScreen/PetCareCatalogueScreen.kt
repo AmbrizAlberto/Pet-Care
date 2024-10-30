@@ -66,6 +66,8 @@ import com.example.spike.presentation.ui.theme.darkCementPalette
 import com.example.spike.presentation.ui.theme.graphitePalette
 import com.example.spike.presentation.ui.theme.grayBackground
 import com.example.spike.presentation.ui.theme.grayContent
+import com.example.spike.presentation.ui.theme.greenTrue
+import com.example.spike.presentation.ui.theme.redFalse
 import com.example.spike.presentation.ui.theme.white700
 import com.example.spike.utils.getTokenFromSharedPreferences
 import com.example.spike.utils.previews.veterinaryItems
@@ -253,13 +255,13 @@ fun CategoryChip(category: String, displayText: String, isSelected: Boolean, onC
 @Composable
 fun CategoryItemList(items: List<Veterinary>) {
 
+    val isAvailable = true
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 5.dp)
     ) {
         items(items) { item ->
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -277,7 +279,7 @@ fun CategoryItemList(items: List<Veterinary>) {
                         model = item.img,
                         contentDescription = item.veterinarieName,
                         modifier = Modifier
-                            .size(80.dp)
+                            .size(110.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .background(Color.LightGray),
                         contentScale = ContentScale.Crop,
@@ -306,6 +308,22 @@ fun CategoryItemList(items: List<Veterinary>) {
                             color = white700,
                             modifier = Modifier.padding(top = 4.dp)
                         )
+                        Box(
+                            modifier = Modifier
+                                .padding(vertical = 10.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(
+                                    if (isAvailable) greenTrue else redFalse
+                                )
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = if (isAvailable) "Available" else "Unavailable",
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             }

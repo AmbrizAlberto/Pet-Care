@@ -19,6 +19,8 @@ val searchColor = Color(0xFF1F1F1F)
 val heartColor = Color(0xFFFF7272)
 val white700 = Color(0xB3FFFFFF)
 val starYellow = Color(0xFFFF9A00)
+val greenTrue = Color(0xFF4CAF50)
+val redFalse = Color(0xFFF44336)
 
 // Main color palette
 val bluePalette = Color(0xFF1368CC)
