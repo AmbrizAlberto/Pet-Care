@@ -5,7 +5,7 @@ import com.example.spike.data.network.service.LoginService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-private const val BASE_URL = "https://api-spike-indol.vercel.app/"
+private const val BASE_URL = "https://api-spikeapp.vercel.app/"
 
 object RetrofitInstance {
     val loginService: LoginService by lazy {
