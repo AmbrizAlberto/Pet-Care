@@ -3,6 +3,7 @@ package com.example.spike.presentation.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -32,6 +33,7 @@ import com.example.spike.presentation.ui.vet.PrincipalVetScreen
 @Composable
 fun GeneralNavHost(navController: NavHostController) {
     val selectedItemIndexMenu = remember { mutableIntStateOf(0) }
+    val viewModel: RegisterViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
@@ -42,30 +44,25 @@ fun GeneralNavHost(navController: NavHostController) {
             LoginScreen(navController, selectedItemIndexMenu = selectedItemIndexMenu)
         }
         composable(Destination.Register.route) {
-            RegisterScreen(navController)
+            RegisterScreen(navController, viewModel)
         }
         composable(Destination.Confirmation.route) {
-            ConfirmationScreen(navController)
-        }
-        composable(Destination.UserRegister.route) {
-            RegisterScreenUser(navController)
-        }
-        composable(Destination.UserDetailsRegister.route) {
-            RegisterScreenUserDetails(navController)
-        }
-        composable(Destination.PassRegister.route) { backStackEntry ->
-            RegisterScreenPass(navController)
+            ConfirmationScreen(viewModel)
         }
 
-        composable(Destination.VetRegister.route) { backStackEntry ->
-            RegisterScreenVet(navController)
+        composable(Destination.PassRegister.route) {
+            RegisterScreenPass(navController, viewModel)
         }
-        composable(Destination.VetAddressRegister.route) { backStackEntry ->
-            RegisterScreenVetAddress(navController)
+
+        composable(Destination.VetRegister.route) {
+            RegisterScreenVet(navController, viewModel)
         }
-       /* composable(Destination.Review.route) { backStackEntry ->
-            ReviewScreen(navController)
-        }*/
+        composable(Destination.VetAddressRegister.route) {
+            RegisterScreenVetAddress(navController, viewModel)
+        }
+        composable(Destination.Review.route) {
+            ReviewScreen(navController, viewModel)
+        }
         composable(Destination.AnimalRegister.route) {
             AnimalSelectionScreen(navController)
         }
@@ -74,6 +71,12 @@ fun GeneralNavHost(navController: NavHostController) {
         }
         composable(Destination.PetDetailsRegister.route){
             RegisterScreenDetails(navController)
+        }
+        composable(Destination.UserRegister.route) {
+            RegisterScreenUser(navController)
+        }
+        composable(Destination.UserDetailsRegister.route) {
+            RegisterScreenUserDetails(navController)
         }
 
 

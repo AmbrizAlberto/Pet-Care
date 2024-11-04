@@ -1,5 +1,6 @@
 package com.example.spike.presentation.ui.shared.screenRegister
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -45,10 +46,12 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun RegisterScreen(navController: NavController) {
+fun RegisterScreen(
+    navController: NavController,
+    viewModel: RegisterViewModel = hiltViewModel()
+) {
     // Estado de selección para los botones
     var selectedButton by remember { mutableStateOf("") }
-    var navigateToNextScreen by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -86,7 +89,7 @@ fun RegisterScreen(navController: NavController) {
                     Button(
                         onClick = {
                             selectedButton = "User"
-                            navigateToNextScreen = true
+                            viewModel.role.value = "PET_OWNER"  // Actualiza el tipo de usuario
                         },
                         modifier = Modifier
                             .size(150.dp)
@@ -116,13 +119,13 @@ fun RegisterScreen(navController: NavController) {
                 }
 
                 // Botón "Veterinary"
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Button(
                         onClick = {
                             selectedButton = "Veterinary"
-                            navigateToNextScreen = true
+                            viewModel.role.value = "VETERINARY_OWNER"
+                            Log.d("RegisterScreen", "Role actualizado: ${viewModel.role.value}")
+
                         },
                         modifier = Modifier
                             .size(150.dp)
@@ -154,13 +157,11 @@ fun RegisterScreen(navController: NavController) {
         }
     }
 
-    // Navegación con retraso
-    if (navigateToNextScreen) {
-        LaunchedEffect(Unit) {
-            when (selectedButton) {
-                "User" -> navController.navigate(Destination.UserRegister.route)
-                "Veterinary" -> navController.navigate(Destination.VetRegister.route)
-            }
+    // Navegación automática cuando se selecciona un botón
+    LaunchedEffect(selectedButton) {
+        when (selectedButton) {
+            "User" -> navController.navigate(Destination.UserRegister.route)
+            "Veterinary" -> navController.navigate(Destination.VetRegister.route)
         }
     }
 }
@@ -171,3 +172,4 @@ fun RegisterScreenPreview() {
     val navController = rememberNavController()
     RegisterScreen(navController = navController)
 }
+

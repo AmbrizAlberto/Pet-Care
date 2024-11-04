@@ -2,7 +2,6 @@ package com.example.spike.data.network.service
 
 import com.example.spike.data.network.model.requests.GetVetsRequest
 import com.example.spike.data.network.model.responses.GetVetsResponse
-import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 

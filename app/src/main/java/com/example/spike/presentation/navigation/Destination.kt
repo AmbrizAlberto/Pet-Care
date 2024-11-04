@@ -18,7 +18,7 @@ sealed class Destination(
     data object AnimalRegister : Destination("register_animal")
     data object PetRegister : Destination ("register_pet")
     data object PetDetailsRegister : Destination ("register_pet_details")
-    data object Review : Destination("")
+    data object Review : Destination("review")
 
     sealed class UserDestination(route: String) : Destination(route) {
         data object VetList : Destination("home")

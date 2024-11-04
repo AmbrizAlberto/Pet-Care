@@ -18,9 +18,10 @@ import com.example.spike.presentation.navigation.GeneralNavHost
 import com.example.spike.presentation.ui.shared.screenLogin.LoginViewModel
 import com.example.spike.presentation.ui.theme.SpikeTheme
 import com.example.spike.utils.enums.SharedPreferences
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.log
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

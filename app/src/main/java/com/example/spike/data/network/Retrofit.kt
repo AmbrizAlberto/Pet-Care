@@ -2,10 +2,12 @@ package com.example.spike.data.network
 
 import com.example.spike.data.network.service.VetService
 import com.example.spike.data.network.service.LoginService
+import com.example.spike.data.network.service.RegisterService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-private const val BASE_URL = "https://api-spike-indol.vercel.app/"
+private const val BASE_URL = "https://api-spikeapp.vercel.app/"
+
 
 object RetrofitInstance {
     val loginService: LoginService by lazy {
@@ -22,4 +24,5 @@ object RetrofitInstance {
             .build()
             .create(VetService::class.java)
     }
+
 }

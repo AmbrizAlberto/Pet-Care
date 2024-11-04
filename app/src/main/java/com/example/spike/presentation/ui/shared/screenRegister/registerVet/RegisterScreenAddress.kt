@@ -42,6 +42,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -49,17 +50,7 @@ import com.example.spike.presentation.navigation.Destination
 import com.example.spike.presentation.ui.shared.screenRegister.RegisterViewModel
 
 @Composable
-fun RegisterScreenVetAddress(navController: NavController) {
-    var street by remember { mutableStateOf("") }
-    var city by remember { mutableStateOf("") }
-    var locality by remember { mutableStateOf("") }
-    var cologne by remember { mutableStateOf("") }
-    var numberInt by remember { mutableStateOf("") }
-    var rfc by remember { mutableStateOf("") }
-    var cp by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var selectedCity by remember { mutableStateOf("Select City") }
-    var selectedLocality by remember { mutableStateOf("Select Locality") }
+fun RegisterScreenVetAddress(navController: NavController, viewModel: RegisterViewModel = hiltViewModel()) {
     var expandedCity by remember { mutableStateOf(false) }
     var expandedLocality by remember { mutableStateOf(false) }
     val cities = listOf("New York", "Los Angeles", "Chicago", "Houston", "Miami")
@@ -112,9 +103,25 @@ fun RegisterScreenVetAddress(navController: NavController) {
 
             // TextField de calle
             TextField(
-                value = street,
-                onValueChange = { street = it },
+                value = viewModel.street.value,
+                onValueChange = { newValue -> viewModel.street.value = newValue },
                 label = { Text("Street") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 26.dp),
+                shape = MaterialTheme.shapes.medium
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // TextField para el número interior
+            TextField(
+                value = viewModel.number_int.value,
+                onValueChange = { newValue ->
+                    viewModel.number_int.value = newValue  // Guardar en el ViewModel
+                    Log.d("RegisterViewModel", "Number Int actualizado: ${viewModel.number_int.value}")
+                },
+                label = { Text("Number Int") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 26.dp),
@@ -137,7 +144,7 @@ fun RegisterScreenVetAddress(navController: NavController) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = selectedCity,
+                        text = viewModel.city.value,  // Usar el valor del ViewModel
                         color = Color.Black,
                         modifier = Modifier.weight(1f)
                     )
@@ -161,7 +168,8 @@ fun RegisterScreenVetAddress(navController: NavController) {
                     DropdownMenuItem(
                         text = { Text(text = city) },
                         onClick = {
-                            selectedCity = city
+                            viewModel.city.value = city
+                            Log.d("RegisterViewModel", "City actualizado: ${viewModel.city.value}")
                             expandedCity = false
                         }
                     )
@@ -184,7 +192,7 @@ fun RegisterScreenVetAddress(navController: NavController) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = selectedLocality,
+                        text = viewModel.locality.value,  // Usar el valor del ViewModel
                         color = Color.Black,
                         modifier = Modifier.weight(1f)
                     )
@@ -208,7 +216,8 @@ fun RegisterScreenVetAddress(navController: NavController) {
                     DropdownMenuItem(
                         text = { Text(text = locality) },
                         onClick = {
-                            selectedLocality = locality
+                            viewModel.locality.value = locality
+                            Log.d("RegisterViewModel", "Locality actualizado: ${viewModel.locality.value}")
                             expandedLocality = false
                         }
                     )
@@ -219,8 +228,11 @@ fun RegisterScreenVetAddress(navController: NavController) {
 
             // TextField para cologne
             TextField(
-                value = cologne,
-                onValueChange = { cologne = it },
+                value = viewModel.cologne.value,
+                onValueChange = { newValue ->
+                    viewModel.cologne.value = newValue
+                    Log.d("RegisterViewModel", "Cologne actualizado: ${viewModel.cologne.value}")
+                },
                 label = { Text("Cologne") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -237,8 +249,11 @@ fun RegisterScreenVetAddress(navController: NavController) {
             ) {
                 // TextField para RFC
                 TextField(
-                    value = rfc,
-                    onValueChange = { rfc = it },
+                    value = viewModel.rfc.value,
+                    onValueChange = { newValue ->
+                        viewModel.rfc.value = newValue
+                        Log.d("RegisterViewModel", "RFC actualizado: ${viewModel.rfc.value}")
+                    },
                     label = { Text("RFC") },
                     modifier = Modifier
                         .weight(1f)
@@ -248,10 +263,11 @@ fun RegisterScreenVetAddress(navController: NavController) {
 
                 // TextField para CP
                 TextField(
-                    value = cp,
+                    value = viewModel.cp.value,
                     onValueChange = { newValue ->
                         if (newValue.length <= 10 && newValue.all { it.isDigit() }) {
-                            cp = newValue
+                            viewModel.cp.value = newValue
+                            Log.d("RegisterViewModel", "CP actualizado: ${viewModel.cp.value}")
                         }
                     },
                     label = { Text("CP") },
@@ -266,28 +282,26 @@ fun RegisterScreenVetAddress(navController: NavController) {
 
             // TextField para número telefónico
             TextField(
-                value = phone,
+                value = viewModel.phone.value,  // Directamente desde el ViewModel
                 onValueChange = { newValue ->
                     if (newValue.length <= 10 && newValue.all { it.isDigit() }) {
-                        phone = newValue
+                        viewModel.phone.value = newValue  // Actualizar el ViewModel
+                        Log.d("RegisterViewModel", "Phone actualizado: ${viewModel.phone.value}")
                     }
                 },
                 label = { Text("Phone Number") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 26.dp),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Phone
-                ),
-                visualTransformation = VisualTransformation.None,
-                shape = MaterialTheme.shapes.medium
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
             )
 
-            Spacer(modifier = Modifier.height(158.dp))
+            Spacer(modifier = Modifier.height(58.dp))
 
             // Botón "Next"
             Button(
                 onClick = {
+                    Log.d("Vet", viewModel.toString()) // Asegúrate de tener un método toString() en el ViewModel
                     navController.navigate("register_pass")
                 },
                 modifier = Modifier
@@ -304,6 +318,7 @@ fun RegisterScreenVetAddress(navController: NavController) {
         }
     }
 }
+
 
 @Preview
 @Composable

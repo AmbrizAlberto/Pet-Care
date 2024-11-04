@@ -44,17 +44,24 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.spike.presentation.navigation.Destination
 
 @Composable
-fun RegisterScreenPass(navController: NavController, userType: String) {
-    var password by remember { mutableStateOf("") }
+fun RegisterScreenPass(
+    navController: NavController,
+    viewModel: RegisterViewModel = hiltViewModel()
+) {
+    // Estados para la contraseña y su visibilidad
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
 
-    // Obtiene el contexto local
+    // Contexto necesario para mostrar Toast
     val context = LocalContext.current
+
+    // Extraemos los valores del ViewModel
+    val password = viewModel.password.value
 
     Box(
         modifier = Modifier
@@ -69,7 +76,6 @@ fun RegisterScreenPass(navController: NavController, userType: String) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            // Flecha de retroceso
             IconButton(
                 onClick = { navController.popBackStack() },
                 modifier = Modifier.align(Alignment.Start)
@@ -81,9 +87,8 @@ fun RegisterScreenPass(navController: NavController, userType: String) {
                 )
             }
 
-            // Barra de progreso
             LinearProgressIndicator(
-                progress = 0.5f,
+                progress = 0.75f,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),
@@ -91,7 +96,7 @@ fun RegisterScreenPass(navController: NavController, userType: String) {
             )
 
             Text(
-                text = "Registro para: $userType",
+                text = "Registro para:",
                 fontSize = 20.sp,
                 color = Color.White,
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -101,10 +106,9 @@ fun RegisterScreenPass(navController: NavController, userType: String) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Campo de contraseña
             TextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { viewModel.password.value = it },  // Guardamos la contraseña en el ViewModel
                 label = { Text("Password") },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -114,7 +118,6 @@ fun RegisterScreenPass(navController: NavController, userType: String) {
                 shape = MaterialTheme.shapes.medium
             )
 
-            // Casilla "See Password" para la contraseña
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -144,10 +147,9 @@ fun RegisterScreenPass(navController: NavController, userType: String) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Campo de confirmación de contraseña
             TextField(
                 value = confirmPassword,
-                onValueChange = { confirmPassword = it },
+                onValueChange = { confirmPassword = it },  // Mantener confirmPassword en el estado local
                 label = { Text("Confirm Password") },
                 visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -157,7 +159,6 @@ fun RegisterScreenPass(navController: NavController, userType: String) {
                 shape = MaterialTheme.shapes.medium
             )
 
-            // Casilla "See Password" para confirmar la contraseña
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -183,20 +184,22 @@ fun RegisterScreenPass(navController: NavController, userType: String) {
 
             Spacer(modifier = Modifier.height(300.dp))
 
-            // Botón "Submit"
             Button(
                 onClick = {
-                    // Lógica para manejar el registro
-                    if (password.isEmpty() || confirmPassword.isEmpty()) {
-                        Toast.makeText(context, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show()
-                    } else if (password != confirmPassword) {
-                        Toast.makeText(context, "Las contraseñas no coinciden.", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "Registro exitoso!", Toast.LENGTH_SHORT).show()
-                        if (userType.lowercase() == "user") {
-                            navController.navigate("login")
-                        } else {
-                            navController.navigate("login")
+                    when {
+                        password.isEmpty() || confirmPassword.isEmpty() -> {
+                            Toast.makeText(context, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show()
+                        }
+                        password != confirmPassword -> {
+                            Toast.makeText(context, "Las contraseñas no coinciden.", Toast.LENGTH_SHORT).show()
+                        }
+                        !isPasswordValid(password) -> {
+                            Toast.makeText(context, "La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, un número y un símbolo especial.", Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {
+                            Log.d("RegisterScreen", "Contraseña enviada: $password")
+                            Toast.makeText(context, "Registro exitoso!", Toast.LENGTH_SHORT).show()
+                            navController.navigate("review")
                         }
                     }
                 },
@@ -213,11 +216,25 @@ fun RegisterScreenPass(navController: NavController, userType: String) {
     }
 }
 
+// Función para validar la contraseña
+fun isPasswordValid(password: String): Boolean {
+    // Verifica que la longitud sea suficiente
+    if (password.length < 8) return false
+
+    // Verifica que contenga al menos una mayúscula, un dígito y un símbolo especial
+    val hasUpperCase = password.any { it.isUpperCase() }
+    val hasDigit = password.any { it.isDigit() }
+    val hasSpecialChar = password.any { it in "!@#\$%^&*()-_=+{}[]|:;<>,.?/~`" }
+
+    return hasUpperCase && hasDigit && hasSpecialChar
+}
+
+
 
 
 @Preview (showBackground  = true)
 @Composable
 fun RegisterScreenUserPassPreview() {
     val navController = rememberNavController()
-    RegisterScreenPass(navController = navController, userType = "User")
+    RegisterScreenPass(navController = navController)
 }
