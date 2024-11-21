@@ -1,5 +1,5 @@
 # Spike
-Spike: Veterinary Services and Pet Care
+Spike: Veterinary Services and Pet Care.
 
 ## Objectives and/or SDG Topics Addressed: 
 The &quot;Spike&quot; is aligned with the
